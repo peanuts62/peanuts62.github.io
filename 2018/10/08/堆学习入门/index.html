@@ -7,13 +7,42 @@
   
   <title>peanuts&#39;blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
+  <meta name="description" content="#从5道堆题看堆利用这次写的很辛苦，希望对读者有帮助。堆实质就是利用游戏规则来获胜的一种艺术。。。 ##unlink什么是unlink尼，众所周知smallbin，unsortedbin和largebin是doule-link的结构，当其chunk free的时候就会几率发生合并，具体情况这里就不进行详细说明了. ####过程实现此处大概说明一下unlink的过程。其函数为unlink(P,BK,">
+<meta property="og:type" content="article">
 <meta property="og:title" content="peanuts&#39;blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta property="og:url" content="http://yoursite.com/2018/10/08/堆学习入门/index.html">
 <meta property="og:site_name" content="peanuts&#39;blog">
+<meta property="og:description" content="#从5道堆题看堆利用这次写的很辛苦，希望对读者有帮助。堆实质就是利用游戏规则来获胜的一种艺术。。。 ##unlink什么是unlink尼，众所周知smallbin，unsortedbin和largebin是doule-link的结构，当其chunk free的时候就会几率发生合并，具体情况这里就不进行详细说明了. ####过程实现此处大概说明一下unlink的过程。其函数为unlink(P,BK,">
 <meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/unlink/cometrue.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/hacknote/add_note.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/hacknote/del_note.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/hacknote/print_note.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/hacknote/hacknote.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/bamboobox/main.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/bamboobox/menu.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/bamboobox/add_item.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/bamboobox/change_item.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/bamboobox/magic.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/bamboobox/bamboobox.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/lab12doub/check.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/lab12doub/fastbin_free_chunk3.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/lab12doub/fastbin_malloc_chunk.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/lab12doub/main.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/lab12doub/add.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/lab12doub/visit.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/lab12doub/del.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/lab12doub/clean.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/lab12doub/magic.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/lab12doub/secretgarden.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/LCTF/main.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/LCTF/add.png">
+<meta property="og:image" content="http://yoursite.com/2018/10/08/堆学习入门/LCTF/loudong.png">
+<meta property="og:updated_time" content="2019-03-13T04:36:39.750Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="peanuts&#39;blog">
+<meta name="twitter:description" content="#从5道堆题看堆利用这次写的很辛苦，希望对读者有帮助。堆实质就是利用游戏规则来获胜的一种艺术。。。 ##unlink什么是unlink尼，众所周知smallbin，unsortedbin和largebin是doule-link的结构，当其chunk free的时候就会几率发生合并，具体情况这里就不进行详细说明了. ####过程实现此处大概说明一下unlink的过程。其函数为unlink(P,BK,">
+<meta name="twitter:image" content="http://yoursite.com/2018/10/08/堆学习入门/unlink/cometrue.png">
   
     <link rel="alternate" href="/atom.xml" title="peanuts&#39;blog" type="application/atom+xml">
   
@@ -60,9 +89,7 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-堆学习入门" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-堆学习入门" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/10/08/堆学习入门/" class="article-date">
   <time datetime="2018-10-08T12:05:21.910Z" itemprop="datePublished">2018-10-08</time>
@@ -168,11 +195,9 @@ strcopy:将末尾‘\x00’作为字符串一部分复制
     </footer>
   </div>
   
-</article>
-
-
+    
   
-
+</article>
 
 </section>
         
