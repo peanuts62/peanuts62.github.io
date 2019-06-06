@@ -96,18 +96,18 @@
 
 
 
-  <meta name="description" content="周末打了华东北赛区的国赛，最后第三名，赛区大佬还是太多，最后佛性的最后一天的patch竟然都没上。。这里记录几个感觉比较有价值的题 note比赛的时候没有刚出来，。。当时脑子坏了😂，结束之后在复现发现题目本身并不难。 思路利用offbynull，做一个overlap，然后leak出地址，接着利用一个index越界到ptr指针实现对freehook的任意写，从而getshell 重要利用漏洞点12">
+  <meta name="description" content="周末打了华东北赛区的国赛，最后第三名，赛区大佬还是太多，最后佛性的最后一天的patch竟然都没上。。这里记录几个感觉比较有价值的题">
 <meta name="keywords" content="ctf-pwn,全国大学生信息安全竞赛">
 <meta property="og:type" content="article">
 <meta property="og:title" content="国赛-华东北赛区">
 <meta property="og:url" content="http://yoursite.com/2019/06/06/国赛-华东北赛区/index.html">
 <meta property="og:site_name" content="peanuts&#39;blog">
-<meta property="og:description" content="周末打了华东北赛区的国赛，最后第三名，赛区大佬还是太多，最后佛性的最后一天的patch竟然都没上。。这里记录几个感觉比较有价值的题 note比赛的时候没有刚出来，。。当时脑子坏了😂，结束之后在复现发现题目本身并不难。 思路利用offbynull，做一个overlap，然后leak出地址，接着利用一个index越界到ptr指针实现对freehook的任意写，从而getshell 重要利用漏洞点12">
+<meta property="og:description" content="周末打了华东北赛区的国赛，最后第三名，赛区大佬还是太多，最后佛性的最后一天的patch竟然都没上。。这里记录几个感觉比较有价值的题">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-06-06T01:28:22.798Z">
+<meta property="og:updated_time" content="2019-06-06T01:33:00.503Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="国赛-华东北赛区">
-<meta name="twitter:description" content="周末打了华东北赛区的国赛，最后第三名，赛区大佬还是太多，最后佛性的最后一天的patch竟然都没上。。这里记录几个感觉比较有价值的题 note比赛的时候没有刚出来，。。当时脑子坏了😂，结束之后在复现发现题目本身并不难。 思路利用offbynull，做一个overlap，然后leak出地址，接着利用一个index越界到ptr指针实现对freehook的任意写，从而getshell 重要利用漏洞点12">
+<meta name="twitter:description" content="周末打了华东北赛区的国赛，最后第三名，赛区大佬还是太多，最后佛性的最后一天的patch竟然都没上。。这里记录几个感觉比较有价值的题">
 
 
 
@@ -384,7 +384,7 @@
                 
               
 
-              <time title="Created: 2019-06-06 09:26:16 / Modified: 09:28:22" itemprop="dateCreated datePublished" datetime="2019-06-06T09:26:16+08:00">2019-06-06</time>
+              <time title="Created: 2019-06-06 09:26:16 / Modified: 09:33:00" itemprop="dateCreated datePublished" datetime="2019-06-06T09:26:16+08:00">2019-06-06</time>
             
 
             
@@ -423,7 +423,7 @@
       
 
       
-        <p>周末打了华东北赛区的国赛，最后第三名，赛区大佬还是太多，最后佛性的最后一天的patch竟然都没上。。这里记录几个感觉比较有价值的题</p>
+        <p>周末打了华东北赛区的国赛，最后第三名，赛区大佬还是太多，最后佛性的最后一天的patch竟然都没上。。这里记录几个感觉比较有价值的题<br><a id="more"></a></p>
 <h2 id="note"><a href="#note" class="headerlink" title="note"></a>note</h2><p>比赛的时候没有刚出来，。。当时脑子坏了😂，结束之后在复现发现题目本身并不难。</p>
 <h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>利用offbynull，做一个overlap，然后leak出地址，接着利用一个index越界到ptr指针实现对freehook的任意写，从而getshell</p>
 <h3 id="重要利用漏洞点"><a href="#重要利用漏洞点" class="headerlink" title="重要利用漏洞点"></a>重要利用漏洞点</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">printf(&quot;remarks&gt; &quot;);</span><br><span class="line">sub_B41(*((_BYTE **)ptr + 4), 64);</span><br><span class="line">printf(&quot;good bye %s\n&quot;, ptr);</span><br><span class="line">free(ptr);</span><br></pre></td></tr></table></figure>
