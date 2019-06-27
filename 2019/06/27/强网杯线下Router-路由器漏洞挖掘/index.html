@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.1" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.1.1',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="强网杯线下Router-路由器漏洞挖掘组委会说这个漏洞是刚报官方还没有披露，所以这里就不说具体的设备厂商和型号了，仅针对题目进行一个分析。">
+<meta name="keywords" content="-iot">
+<meta property="og:type" content="article">
+<meta property="og:title" content="强网杯线下Router-路由器漏洞挖掘">
+<meta property="og:url" content="http://yoursite.com/2019/06/27/强网杯线下Router-路由器漏洞挖掘/index.html">
+<meta property="og:site_name" content="peanuts&#39;blog">
+<meta property="og:description" content="强网杯线下Router-路由器漏洞挖掘组委会说这个漏洞是刚报官方还没有披露，所以这里就不说具体的设备厂商和型号了，仅针对题目进行一个分析。">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/2019/06/27/强网杯线下Router-路由器漏洞挖掘/1.png">
+<meta property="og:image" content="http://yoursite.com/2019/06/27/强网杯线下Router-路由器漏洞挖掘/2.png">
+<meta property="og:updated_time" content="2019-06-27T13:00:12.757Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="强网杯线下Router-路由器漏洞挖掘">
+<meta name="twitter:description" content="强网杯线下Router-路由器漏洞挖掘组委会说这个漏洞是刚报官方还没有披露，所以这里就不说具体的设备厂商和型号了，仅针对题目进行一个分析。">
+<meta name="twitter:image" content="http://yoursite.com/2019/06/27/强网杯线下Router-路由器漏洞挖掘/1.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/06/27/强网杯线下Router-路由器漏洞挖掘/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>强网杯线下Router-路由器漏洞挖掘 | peanuts'blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">peanuts'blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-mylove">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/Mylove/" rel="section"><i class="menu-item-icon fa fa-fw fa-heart"></i> <br>Mylove</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/27/强网杯线下Router-路由器漏洞挖掘/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="peanuts">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/touxiang.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="peanuts'blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">强网杯线下Router-路由器漏洞挖掘
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-06-27 20:57:24 / Modified: 21:00:12" itemprop="dateCreated datePublished" datetime="2019-06-27T20:57:24+08:00">2019-06-27</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="强网杯线下Router-路由器漏洞挖掘"><a href="#强网杯线下Router-路由器漏洞挖掘" class="headerlink" title="强网杯线下Router-路由器漏洞挖掘"></a>强网杯线下Router-路由器漏洞挖掘</h1><p>组委会说这个漏洞是刚报官方还没有披露，所以这里就不说具体的设备厂商和型号了，仅针对题目进行一个分析。<br><a id="more"></a></p>
+<h2 id="binwalk-amp-firmware-mod-kit解压"><a href="#binwalk-amp-firmware-mod-kit解压" class="headerlink" title="binwalk&amp;firmware-mod-kit解压"></a>binwalk&amp;firmware-mod-kit解压</h2><p>之前有过解压bin文件的经验所以选择了直接用binwak解压<br><code>binwalk -Me ./xxx</code></p>
+<p>但是发现解压出来的文件中比较有用的squashfs-root文件夹竟然是空的。于是赶紧去搜一下资料，发现同目录下一个以<code>.squashfs</code>的文件可以被解压为文件系统。就下载来试试，利用的是其中的一个<code>.sh</code>脚本。</p>
+<p><code>unsquashfs_all.sh ./xxx.squashfs</code></p>
+<p>这样一个完整的文件系统就被解压出来了。其中包含的文件<code>htdocs</code>是主要的挖掘对象。</p>
+<h2 id="漏洞搜寻"><a href="#漏洞搜寻" class="headerlink" title="漏洞搜寻"></a>漏洞搜寻</h2><p>这里对文件夹中的<code>cgbin</code>的二进制文件进行分析，用的是之前NASA开源的工具。<br><img src="./1.png" alt><br>看起来像是一个服务解析然后针对服务进行一个函数的调用。<br>这里我当时所用的技巧是直接定位<code>system</code>函数的位置，因为自己太菜了只知道可能有命令注入。。。<br><img src="./2.png" alt></p>
+<h3 id="命令注入分析"><a href="#命令注入分析" class="headerlink" title="命令注入分析"></a>命令注入分析</h3><h4 id="captchacgi-main"><a href="#captchacgi-main" class="headerlink" title="captchacgi_main"></a>captchacgi_main</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">undefined4 <span class="title">captchacgi_main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> *__s1;</span><br><span class="line">  <span class="keyword">int</span> iVar1;</span><br><span class="line">  code *pcVar2;</span><br><span class="line">  undefined4 uVar3;</span><br><span class="line">  <span class="keyword">char</span> acStack648 [<span class="number">256</span>];</span><br><span class="line">  undefined auStack392 [<span class="number">216</span>];</span><br><span class="line">  undefined auStack176 [<span class="number">164</span>];</span><br><span class="line">  </span><br><span class="line">  __s1 = getenv(<span class="string">"REQUEST_METHOD"</span>);</span><br><span class="line">  <span class="keyword">if</span> (__s1 == (<span class="keyword">char</span> *)<span class="number">0x0</span>) &#123;</span><br><span class="line">    __s1 = <span class="string">"no REQUEST"</span>;</span><br><span class="line">LAB_0040b694:</span><br><span class="line">    cgibin_print_http_status(<span class="number">400</span>,<span class="number">0x420554</span>,__s1);</span><br><span class="line">    uVar3 = <span class="number">0xffffffff</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    iVar1 = strcasecmp(__s1,<span class="string">"GET"</span>);</span><br><span class="line">    <span class="keyword">if</span> (iVar1 == <span class="number">0</span>) &#123;</span><br><span class="line">      pcVar2 = FUN_0040b7e8;</span><br><span class="line">      uVar3 = <span class="number">0x40</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">      iVar1 = strcasecmp(__s1,<span class="string">"POST"</span>);</span><br><span class="line">      <span class="keyword">if</span> (iVar1 != <span class="number">0</span>) &#123;</span><br><span class="line">        __s1 = <span class="string">"unsupported HTTP request"</span>;</span><br><span class="line">        <span class="keyword">goto</span> LAB_0040b694;</span><br><span class="line">      &#125;</span><br><span class="line">      pcVar2 = FUN_0040b734;</span><br><span class="line">      uVar3 = <span class="number">0x400</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    cgibin_parse_request(pcVar2,<span class="number">0</span>,uVar3);</span><br><span class="line">    iVar1 = sess_generate_captcha(auStack392);</span><br><span class="line">    <span class="keyword">if</span> (iVar1 == <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="built_in">printf</span>(</span><br><span class="line">            <span class="string">"HTTP/1.1 200 OK\r\nContent-Type: text/xml\r\n\r\n&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;&lt;captcha&gt;\n\t&lt;result&gt;FAIL&lt;/result&gt;&lt;message&gt;NO SESSION&lt;/message&gt;\n&lt;/captcha&gt;"</span></span><br><span class="line">            );</span><br><span class="line">      uVar3 = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="built_in">sprintf</span>(acStack648,</span><br><span class="line">              <span class="string">"rndimage -f /htdocs/web/docs/captcha_%d.jpeg -p /usr/sbin/fonts -w 180 -t 40 %s"</span>,</span><br><span class="line">              iVar1,auStack176);</span><br><span class="line">      uVar3 = <span class="number">0</span>;</span><br><span class="line">      system(acStack648);</span><br><span class="line">      <span class="built_in">printf</span>(</span><br><span class="line">             <span class="string">"HTTP/1.1 200 OK\r\nContent-Type: text/xml\r\n\r\n&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;&lt;captcha&gt;&lt;result&gt;OK&lt;/result&gt;&lt;message&gt;/docs/captcha_%d.jpeg&lt;/message&gt;&lt;/captcha&gt;"</span></span><br><span class="line">             ,iVar1);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  FUN_0040b4e0();</span><br><span class="line">  <span class="keyword">return</span> uVar3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里反编译有一点奇怪，就是在<code>sprintf</code>函数这个位置的austack176并没有赋值，但是通过汇编的分析这个值是固定没有办法进行命令注入。。</p>
+<h4 id="lxmldbc-system"><a href="#lxmldbc-system" class="headerlink" title="lxmldbc_system"></a>lxmldbc_system</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">void lxmldbc_system(char *pcParm1,undefined4 uParm2,undefined4 uParm3,undefined4 uParm4)</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  undefined4 local_res4;</span><br><span class="line">  undefined4 local_res8;</span><br><span class="line">  undefined4 local_resc;</span><br><span class="line">  char acStack1036 [1028];</span><br><span class="line">  </span><br><span class="line">  local_res4 = uParm2;</span><br><span class="line">  local_res8 = uParm3;</span><br><span class="line">  local_resc = uParm4;</span><br><span class="line">  vsnprintf(acStack1036,0x400,pcParm1,&amp;local_res4);</span><br><span class="line">  system(acStack1036);</span><br><span class="line">  return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的system参数的开放性很大可以仔细看一下，接着对这个函数进行一个交叉引用的查看。可以找到一个<code>ssdpcgi_main</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">undefined4 ssdpcgi_main(int iParm1)</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  undefined4 uVar1;</span><br><span class="line">  char *__s1;</span><br><span class="line">  char *pcVar2;</span><br><span class="line">  char *pcVar3;</span><br><span class="line">  char *pcVar4;</span><br><span class="line">  int iVar5;</span><br><span class="line">  char *pcVar6;</span><br><span class="line">  </span><br><span class="line">  uVar1 = 0xffffffff;</span><br><span class="line">  if (iParm1 == 2) &#123;</span><br><span class="line">    __s1 = getenv(&quot;HTTP_ST&quot;);</span><br><span class="line">    pcVar2 = getenv(&quot;REMOTE_ADDR&quot;);</span><br><span class="line">    pcVar3 = getenv(&quot;REMOTE_PORT&quot;);</span><br><span class="line">    pcVar4 = getenv(&quot;SERVER_ID&quot;);</span><br><span class="line">    if ((((__s1 == (char *)0x0) || (pcVar2 == (char *)0x0)) || (pcVar3 == (char *)0x0)) ||</span><br><span class="line">       (pcVar4 == (char *)0x0)) &#123;</span><br><span class="line">      uVar1 = 0xffffffff;</span><br><span class="line">    &#125;</span><br><span class="line">    else &#123;</span><br><span class="line">      iVar5 = strncmp(__s1,&quot;ssdp:all&quot;,8);</span><br><span class="line">      if (iVar5 == 0) &#123;</span><br><span class="line">        __s1 = &quot;%s ssdpall %s:%s %s &amp;&quot;;</span><br><span class="line">      &#125;</span><br><span class="line">      else &#123;</span><br><span class="line">        iVar5 = strncmp(__s1,&quot;upnp:rootdevice&quot;,0xf);</span><br><span class="line">        if (iVar5 == 0) &#123;</span><br><span class="line">          __s1 = &quot;%s rootdevice %s:%s %s &amp;&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        else &#123;</span><br><span class="line">          iVar5 = strncmp(__s1,&quot;uuid:&quot;,5);</span><br><span class="line">          if (iVar5 == 0) &#123;</span><br><span class="line">            __s1 = &quot;%s uuid %s:%s %s %s &amp;&quot;;</span><br><span class="line">          &#125;</span><br><span class="line">          else &#123;</span><br><span class="line">            iVar5 = strncmp(__s1,&quot;urn:&quot;,4);</span><br><span class="line">            if (iVar5 != 0) &#123;</span><br><span class="line">              return 0;</span><br><span class="line">            &#125;</span><br><span class="line">            pcVar6 = strstr(__s1,&quot;:device:&quot;);</span><br><span class="line">            if (pcVar6 == (char *)0x0) &#123;</span><br><span class="line">              __s1 = strstr(__s1,&quot;:service:&quot;);</span><br><span class="line">              if (__s1 == (char *)0x0) &#123;</span><br><span class="line">                return 0;</span><br><span class="line">              &#125;</span><br><span class="line">              __s1 = &quot;%s services %s:%s %s %s &amp;&quot;;</span><br><span class="line">            &#125;</span><br><span class="line">            else &#123;</span><br><span class="line">              __s1 = &quot;%s devices %s:%s %s %s &amp;&quot;;</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      lxmldbc_system(__s1,&quot;/etc/scripts/upnp/M-SEARCH.sh&quot;,pcVar2,pcVar3,pcVar4);</span><br><span class="line">      uVar1 = 0;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  return uVar1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里就有一个命令注入的风险，因为输入的参数是我们可以控制的，这样就发现了第一个漏洞，接下来继续逆一波。</p>
+<h3 id="offby-n"><a href="#offby-n" class="headerlink" title="offby\n"></a>offby\n</h3><p>当时发现的时候感觉可以更改用户组的权限来达到执行更高指令的目的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line">int phpcgi_main(int iParm1,int iParm2,int *piParm3)</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  char *__s1;</span><br><span class="line">  FILE *__stream;</span><br><span class="line">  undefined4 uVar1;</span><br><span class="line">  code *pcVar2;</span><br><span class="line">  int iVar3;</span><br><span class="line">  int iVar4;</span><br><span class="line">  char acStack40 [24];</span><br><span class="line">  </span><br><span class="line">  if (iParm1 &lt; 2) &#123;</span><br><span class="line">    iVar3 = -1;</span><br><span class="line">    iVar4 = 0;</span><br><span class="line">    goto LAB_004060e8;</span><br><span class="line">  &#125;</span><br><span class="line">  iVar4 = sobj_new();</span><br><span class="line">  if (iVar4 != 0) &#123;</span><br><span class="line">    sobj_add_string(iVar4,*(undefined4 *)(iParm2 + 4));</span><br><span class="line">    sobj_add_char(iVar4,10);</span><br><span class="line">    while (*piParm3 != 0) &#123;</span><br><span class="line">      sobj_add_string(iVar4,&quot;_SERVER_&quot;);</span><br><span class="line">      iVar3 = *piParm3;</span><br><span class="line">      piParm3 = piParm3 + 1;</span><br><span class="line">      sobj_add_string(iVar4,iVar3);</span><br><span class="line">      sobj_add_char(iVar4,10);</span><br><span class="line">    &#125;</span><br><span class="line">    __s1 = getenv(&quot;REQUEST_METHOD&quot;);</span><br><span class="line">    if (__s1 != (char *)0x0) &#123;</span><br><span class="line">      iVar3 = strcasecmp(__s1,&quot;HEAD&quot;);</span><br><span class="line">      if ((iVar3 == 0) || (iVar3 = strcasecmp(__s1,&quot;GET&quot;), iVar3 == 0)) &#123;</span><br><span class="line">        pcVar2 = FUN_00405cdc;</span><br><span class="line">      &#125;</span><br><span class="line">      else &#123;</span><br><span class="line">        iVar3 = strcasecmp(__s1,&quot;POST&quot;);</span><br><span class="line">        if (iVar3 != 0) goto LAB_004060e4;</span><br><span class="line">        pcVar2 = FUN_00405aa0;</span><br><span class="line">      &#125;</span><br><span class="line">      iVar3 = cgibin_parse_request(pcVar2,iVar4,0x80000);</span><br><span class="line">      if (iVar3 &lt; 0) &#123;</span><br><span class="line">        if (iVar3 == -100) &#123;</span><br><span class="line">          __stream = fopen(&quot;/htdocs/web/info.php&quot;,&quot;r&quot;);</span><br><span class="line">          if (__stream != (FILE *)0x0) &#123;</span><br><span class="line">            fclose(__stream);</span><br><span class="line">            cgibin_print_http_resp(1,&quot;/info.php&quot;,&amp;DAT_00420ca4,&quot;ERR_REQ_TOO_LONG&quot;,0,0x420554);</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        else &#123;</span><br><span class="line">          cgibin_print_http_status(400,&quot;unsupported HTTP request&quot;,&quot;unsupported HTTP request&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      else &#123;</span><br><span class="line">        uVar1 = sess_validate();</span><br><span class="line">        sprintf(acStack40,&quot;AUTHORIZED_GROUP=%d&quot;,uVar1);</span><br><span class="line">        sobj_add_string(iVar4,acStack40);</span><br><span class="line">        sobj_add_char(iVar4,10);</span><br><span class="line">        sobj_add_string(iVar4,&quot;SESSION_UID=&quot;);</span><br><span class="line">        sess_get_uid(iVar4);</span><br><span class="line">        sobj_add_char(iVar4,10);</span><br><span class="line">        uVar1 = sobj_get_string(iVar4);</span><br><span class="line">        iVar3 = xmldbc_ephp(0,0,uVar1,stdout);</span><br><span class="line">      &#125;</span><br><span class="line">      goto LAB_004060e8;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">LAB_004060e4:</span><br><span class="line">  iVar3 = -1;</span><br><span class="line">LAB_004060e8:</span><br><span class="line">  cgibin_clean_tempfiles();</span><br><span class="line">  if (iVar4 != 0) &#123;</span><br><span class="line">    sobj_del(iVar4);</span><br><span class="line">  &#125;</span><br><span class="line">  return iVar3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="信息泄漏漏洞"><a href="#信息泄漏漏洞" class="headerlink" title="信息泄漏漏洞"></a>信息泄漏漏洞</h4><p>这个漏洞是一个老洞，但是厂商的修复方法很暴力，只是吧信息泄漏的信息改了，但其实可以leak别的地方的信息。<br><code>htdocs/web/getcfg.php</code></p>
+<p>在这个php文件中，读者可以自己进行一个分析，网上也有对应的文章，这里选择leak的文件<code>RUNTIME.WPS.WLAN-1.xml.php</code>其中就可以读到需要的账户和密码，然后利用一些方法就可以get。因为这个方法是偏web个人的能力实在有限贴出链接：<br><a href>https://blog.csdn.net/qq_33850304/article/details/92395201</a></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>因为一些原因这里就不贴出利用的poc了，已知漏洞下这些利用还是比较简单的。这次比赛发现了iot这个大世界的丰富精彩啊。。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iot/" rel="tag"># -iot</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/27/SCTF2019-PWN-WP/" rel="next" title="SCTF-PWN-WP">
+                <i class="fa fa-chevron-left"></i> SCTF-PWN-WP
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80NDI3My8yMDgwNQ=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/touxiang.JPG" alt="peanuts">
+            
+              <p class="site-author-name" itemprop="name">peanuts</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#强网杯线下Router-路由器漏洞挖掘"><span class="nav-number">1.</span> <span class="nav-text">强网杯线下Router-路由器漏洞挖掘</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#binwalk-amp-firmware-mod-kit解压"><span class="nav-number">1.1.</span> <span class="nav-text">binwalk&amp;firmware-mod-kit解压</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#漏洞搜寻"><span class="nav-number">1.2.</span> <span class="nav-text">漏洞搜寻</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#命令注入分析"><span class="nav-number">1.2.1.</span> <span class="nav-text">命令注入分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#captchacgi-main"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">captchacgi_main</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lxmldbc-system"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">lxmldbc_system</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#offby-n"><span class="nav-number">1.2.2.</span> <span class="nav-text">offby\n</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#信息泄漏漏洞"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">信息泄漏漏洞</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.2.3.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">peanuts</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.1</div>
+
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.1"></script>
+
+  <script src="/js/motion.js?v=7.1.1"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.1"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.1"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.1"></script>
+<script src="/js/post-details.js?v=7.1.1"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.1"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: '2019/06/27/强网杯线下Router-路由器漏洞挖掘/'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
