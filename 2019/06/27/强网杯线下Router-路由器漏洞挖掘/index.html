@@ -104,13 +104,13 @@
 <meta property="og:site_name" content="peanuts&#39;blog">
 <meta property="og:description" content="强网杯线下Router-路由器漏洞挖掘组委会说这个漏洞是刚报官方还没有披露，所以这里就不说具体的设备厂商和型号了，仅针对题目进行一个分析。">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://yoursite.com/2019/06/27/强网杯线下Router-路由器漏洞挖掘/1.png">
-<meta property="og:image" content="http://yoursite.com/2019/06/27/强网杯线下Router-路由器漏洞挖掘/2.png">
-<meta property="og:updated_time" content="2019-06-27T13:00:12.757Z">
+<meta property="og:image" content="http://yoursite.com/image/1.png">
+<meta property="og:image" content="http://yoursite.com/image/2.png">
+<meta property="og:updated_time" content="2019-07-03T06:39:37.153Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="强网杯线下Router-路由器漏洞挖掘">
 <meta name="twitter:description" content="强网杯线下Router-路由器漏洞挖掘组委会说这个漏洞是刚报官方还没有披露，所以这里就不说具体的设备厂商和型号了，仅针对题目进行一个分析。">
-<meta name="twitter:image" content="http://yoursite.com/2019/06/27/强网杯线下Router-路由器漏洞挖掘/1.png">
+<meta name="twitter:image" content="http://yoursite.com/image/1.png">
 
 
 
@@ -387,12 +387,24 @@
                 
               
 
-              <time title="Created: 2019-06-27 20:57:24 / Modified: 21:00:12" itemprop="dateCreated datePublished" datetime="2019-06-27T20:57:24+08:00">2019-06-27</time>
+              <time title="Created: 2019-06-27 20:57:24" itemprop="dateCreated datePublished" datetime="2019-06-27T20:57:24+08:00">2019-06-27</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-07-03 14:39:37" itemprop="dateModified" datetime="2019-07-03T14:39:37+08:00">2019-07-03</time>
               
             
           </span>
@@ -431,7 +443,7 @@
 <p>但是发现解压出来的文件中比较有用的squashfs-root文件夹竟然是空的。于是赶紧去搜一下资料，发现同目录下一个以<code>.squashfs</code>的文件可以被解压为文件系统。就下载来试试，利用的是其中的一个<code>.sh</code>脚本。</p>
 <p><code>unsquashfs_all.sh ./xxx.squashfs</code></p>
 <p>这样一个完整的文件系统就被解压出来了。其中包含的文件<code>htdocs</code>是主要的挖掘对象。</p>
-<h2 id="漏洞搜寻"><a href="#漏洞搜寻" class="headerlink" title="漏洞搜寻"></a>漏洞搜寻</h2><p>这里对文件夹中的<code>cgbin</code>的二进制文件进行分析，用的是之前NASA开源的工具。<br><img src="./1.png" alt><br>看起来像是一个服务解析然后针对服务进行一个函数的调用。<br>这里我当时所用的技巧是直接定位<code>system</code>函数的位置，因为自己太菜了只知道可能有命令注入。。。<br><img src="./2.png" alt></p>
+<h2 id="漏洞搜寻"><a href="#漏洞搜寻" class="headerlink" title="漏洞搜寻"></a>漏洞搜寻</h2><p>这里对文件夹中的<code>cgbin</code>的二进制文件进行分析，用的是之前NASA开源的工具。<br><img src="/image/1.png" alt><br>看起来像是一个服务解析然后针对服务进行一个函数的调用。<br>这里我当时所用的技巧是直接定位<code>system</code>函数的位置，因为自己太菜了只知道可能有命令注入。。。<br><img src="/image/2.png" alt></p>
 <h3 id="命令注入分析"><a href="#命令注入分析" class="headerlink" title="命令注入分析"></a>命令注入分析</h3><h4 id="captchacgi-main"><a href="#captchacgi-main" class="headerlink" title="captchacgi_main"></a>captchacgi_main</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">undefined4 <span class="title">captchacgi_main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> *__s1;</span><br><span class="line">  <span class="keyword">int</span> iVar1;</span><br><span class="line">  code *pcVar2;</span><br><span class="line">  undefined4 uVar3;</span><br><span class="line">  <span class="keyword">char</span> acStack648 [<span class="number">256</span>];</span><br><span class="line">  undefined auStack392 [<span class="number">216</span>];</span><br><span class="line">  undefined auStack176 [<span class="number">164</span>];</span><br><span class="line">  </span><br><span class="line">  __s1 = getenv(<span class="string">"REQUEST_METHOD"</span>);</span><br><span class="line">  <span class="keyword">if</span> (__s1 == (<span class="keyword">char</span> *)<span class="number">0x0</span>) &#123;</span><br><span class="line">    __s1 = <span class="string">"no REQUEST"</span>;</span><br><span class="line">LAB_0040b694:</span><br><span class="line">    cgibin_print_http_status(<span class="number">400</span>,<span class="number">0x420554</span>,__s1);</span><br><span class="line">    uVar3 = <span class="number">0xffffffff</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    iVar1 = strcasecmp(__s1,<span class="string">"GET"</span>);</span><br><span class="line">    <span class="keyword">if</span> (iVar1 == <span class="number">0</span>) &#123;</span><br><span class="line">      pcVar2 = FUN_0040b7e8;</span><br><span class="line">      uVar3 = <span class="number">0x40</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">      iVar1 = strcasecmp(__s1,<span class="string">"POST"</span>);</span><br><span class="line">      <span class="keyword">if</span> (iVar1 != <span class="number">0</span>) &#123;</span><br><span class="line">        __s1 = <span class="string">"unsupported HTTP request"</span>;</span><br><span class="line">        <span class="keyword">goto</span> LAB_0040b694;</span><br><span class="line">      &#125;</span><br><span class="line">      pcVar2 = FUN_0040b734;</span><br><span class="line">      uVar3 = <span class="number">0x400</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    cgibin_parse_request(pcVar2,<span class="number">0</span>,uVar3);</span><br><span class="line">    iVar1 = sess_generate_captcha(auStack392);</span><br><span class="line">    <span class="keyword">if</span> (iVar1 == <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="built_in">printf</span>(</span><br><span class="line">            <span class="string">"HTTP/1.1 200 OK\r\nContent-Type: text/xml\r\n\r\n&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;&lt;captcha&gt;\n\t&lt;result&gt;FAIL&lt;/result&gt;&lt;message&gt;NO SESSION&lt;/message&gt;\n&lt;/captcha&gt;"</span></span><br><span class="line">            );</span><br><span class="line">      uVar3 = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="built_in">sprintf</span>(acStack648,</span><br><span class="line">              <span class="string">"rndimage -f /htdocs/web/docs/captcha_%d.jpeg -p /usr/sbin/fonts -w 180 -t 40 %s"</span>,</span><br><span class="line">              iVar1,auStack176);</span><br><span class="line">      uVar3 = <span class="number">0</span>;</span><br><span class="line">      system(acStack648);</span><br><span class="line">      <span class="built_in">printf</span>(</span><br><span class="line">             <span class="string">"HTTP/1.1 200 OK\r\nContent-Type: text/xml\r\n\r\n&lt;?xml version=\"1.0\" encoding=\"utf-8\"?&gt;&lt;captcha&gt;&lt;result&gt;OK&lt;/result&gt;&lt;message&gt;/docs/captcha_%d.jpeg&lt;/message&gt;&lt;/captcha&gt;"</span></span><br><span class="line">             ,iVar1);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  FUN_0040b4e0();</span><br><span class="line">  <span class="keyword">return</span> uVar3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这里反编译有一点奇怪，就是在<code>sprintf</code>函数这个位置的austack176并没有赋值，但是通过汇编的分析这个值是固定没有办法进行命令注入。。</p>
 <h4 id="lxmldbc-system"><a href="#lxmldbc-system" class="headerlink" title="lxmldbc_system"></a>lxmldbc_system</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">void lxmldbc_system(char *pcParm1,undefined4 uParm2,undefined4 uParm3,undefined4 uParm4)</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  undefined4 local_res4;</span><br><span class="line">  undefined4 local_res8;</span><br><span class="line">  undefined4 local_resc;</span><br><span class="line">  char acStack1036 [1028];</span><br><span class="line">  </span><br><span class="line">  local_res4 = uParm2;</span><br><span class="line">  local_res8 = uParm3;</span><br><span class="line">  local_resc = uParm4;</span><br><span class="line">  vsnprintf(acStack1036,0x400,pcParm1,&amp;local_res4);</span><br><span class="line">  system(acStack1036);</span><br><span class="line">  return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -488,6 +500,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/01/揭秘家用路由器0day漏洞挖掘技术笔记/" rel="prev" title="揭秘家用路由器0day漏洞挖掘技术笔记">
+                揭秘家用路由器0day漏洞挖掘技术笔记 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -563,7 +579,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-count">10</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
