@@ -96,19 +96,19 @@
 
 
 
-  <meta name="description" content="p72[DIR605L]关于启动qemu-mips脚本的问题sudo chroot ./ ./qemu-mips ./bin./boa 这里是一个chroot将本地作为根目录的问题，应当注意此地，书上缺少了./导致chroot命令将./qemu-mpis作为了根目录。 利用函数劫持达到正常运行固件的目的文中劫持的是apmib_init()函数，此函数来自链接库apmib.so链接库中，所以重写ap">
+  <meta name="description" content="简单的记录下自己看书的笔记">
 <meta name="keywords" content="-iot">
 <meta property="og:type" content="article">
 <meta property="og:title" content="揭秘家用路由器0day漏洞挖掘技术笔记">
 <meta property="og:url" content="http://yoursite.com/2019/07/01/揭秘家用路由器0day漏洞挖掘技术笔记/index.html">
 <meta property="og:site_name" content="peanuts&#39;blog">
-<meta property="og:description" content="p72[DIR605L]关于启动qemu-mips脚本的问题sudo chroot ./ ./qemu-mips ./bin./boa 这里是一个chroot将本地作为根目录的问题，应当注意此地，书上缺少了./导致chroot命令将./qemu-mpis作为了根目录。 利用函数劫持达到正常运行固件的目的文中劫持的是apmib_init()函数，此函数来自链接库apmib.so链接库中，所以重写ap">
+<meta property="og:description" content="简单的记录下自己看书的笔记">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://yoursite.com/image/1.png">
-<meta property="og:updated_time" content="2019-07-03T06:40:12.438Z">
+<meta property="og:updated_time" content="2019-07-03T06:42:17.093Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="揭秘家用路由器0day漏洞挖掘技术笔记">
-<meta name="twitter:description" content="p72[DIR605L]关于启动qemu-mips脚本的问题sudo chroot ./ ./qemu-mips ./bin./boa 这里是一个chroot将本地作为根目录的问题，应当注意此地，书上缺少了./导致chroot命令将./qemu-mpis作为了根目录。 利用函数劫持达到正常运行固件的目的文中劫持的是apmib_init()函数，此函数来自链接库apmib.so链接库中，所以重写ap">
+<meta name="twitter:description" content="简单的记录下自己看书的笔记">
 <meta name="twitter:image" content="http://yoursite.com/image/1.png">
 
 
@@ -403,7 +403,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-07-03 14:40:12" itemprop="dateModified" datetime="2019-07-03T14:40:12+08:00">2019-07-03</time>
+                <time title="Modified: 2019-07-03 14:42:17" itemprop="dateModified" datetime="2019-07-03T14:42:17+08:00">2019-07-03</time>
               
             
           </span>
@@ -437,7 +437,8 @@
       
 
       
-        <h3 id="p72-DIR605L"><a href="#p72-DIR605L" class="headerlink" title="p72[DIR605L]"></a>p72[DIR605L]</h3><p>关于启动qemu-mips脚本的问题<br><code>sudo chroot ./ ./qemu-mips ./bin./boa</code></p>
+        <p>简单的记录下自己看书的笔记<br><a id="more"></a></p>
+<h3 id="p72-DIR605L"><a href="#p72-DIR605L" class="headerlink" title="p72[DIR605L]"></a>p72[DIR605L]</h3><p>关于启动qemu-mips脚本的问题<br><code>sudo chroot ./ ./qemu-mips ./bin./boa</code></p>
 <p>这里是一个chroot将本地作为根目录的问题，应当注意此地，书上缺少了<code>./</code>导致<code>chroot</code>命令将<code>./qemu-mpis</code>作为了根目录。</p>
 <h4 id="利用函数劫持达到正常运行固件的目的"><a href="#利用函数劫持达到正常运行固件的目的" class="headerlink" title="利用函数劫持达到正常运行固件的目的"></a>利用函数劫持达到正常运行固件的目的</h4><p>文中劫持的是apmib_init()函数，此函数来自链接库apmib.so链接库中，所以重写apmib.so，然后用<code>qemu -E LD_PRELOAD=&quot;./apmib-ld.so&quot;</code>指定链接库运行。</p>
 <h3 id="p81-DIR605L"><a href="#p81-DIR605L" class="headerlink" title="p81[DIR605L]"></a>p81[DIR605L]</h3><p>关于ida模拟运行路由文件系统。</p>

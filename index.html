@@ -399,7 +399,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-07-03 14:40:12" itemprop="dateModified" datetime="2019-07-03T14:40:12+08:00">2019-07-03</time>
+                <time title="Modified: 2019-07-03 14:42:17" itemprop="dateModified" datetime="2019-07-03T14:42:17+08:00">2019-07-03</time>
               
             
           </span>
@@ -434,30 +434,19 @@
 
       
         
+          <p>简单的记录下自己看书的笔记<br>
+          <!--noindex-->
           
-            <h3 id="p72-DIR605L"><a href="#p72-DIR605L" class="headerlink" title="p72[DIR605L]"></a>p72[DIR605L]</h3><p>关于启动qemu-mips脚本的问题<br><code>sudo chroot ./ ./qemu-mips ./bin./boa</code></p>
-<p>这里是一个chroot将本地作为根目录的问题，应当注意此地，书上缺少了<code>./</code>导致<code>chroot</code>命令将<code>./qemu-mpis</code>作为了根目录。</p>
-<h4 id="利用函数劫持达到正常运行固件的目的"><a href="#利用函数劫持达到正常运行固件的目的" class="headerlink" title="利用函数劫持达到正常运行固件的目的"></a>利用函数劫持达到正常运行固件的目的</h4><p>文中劫持的是apmib_init()函数，此函数来自链接库apmib.so链接库中，所以重写apmib.so，然后用<code>qemu -E LD_PRELOAD=&quot;./apmib-ld.so&quot;</code>指定链接库运行。</p>
-<h3 id="p81-DIR605L"><a href="#p81-DIR605L" class="headerlink" title="p81[DIR605L]"></a>p81[DIR605L]</h3><p>关于ida模拟运行路由文件系统。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> debug</span><br><span class="line"><span class="meta">#</span>!/bin/bash</span><br><span class="line">INPUT=$1  //接收bash脚本的第一个参数作为BusyBox为输入参数</span><br><span class="line">LEN=$(echo -n "$INPUT" | wc -c) //计算输入参数长度</span><br><span class="line">PORT="1234" //设定端口胃1234</span><br><span class="line">if ["$LEN" == "0"] || ["$INPUT" == "-h"] || ["$UID" != "0"]</span><br><span class="line">then</span><br><span class="line">    echo "\nUsage: sudo $0 \n"</span><br><span class="line">    exit 1</span><br><span class="line">fi //判断参数个数和类型是否正确，如有错误显示使用方法，且需要root权限执行</span><br><span class="line">cp $(which qemu-mips) ./qemu //将文件copy到本地文件</span><br><span class="line">echo "$INPUT" | chroot . ./qemu -E CONTENT_LENGTH=$LEN -g $PORT /bin/busybox 2&gt;/dev/null</span><br><span class="line">rm -f ./qemu</span><br></pre></td></tr></table></figure>
-<p>启动</p>
-<p><code>sudo sh ./text.sh &quot;argument&quot;</code></p>
-<p>gdb调试方法</p>
-<p><code>gdb-multiarch ./xxx</code></p>
-<p><code>set architecture mips</code> //可选</p>
-<p><code>target remote address:port</code></p>
-<h3 id="p87-IDA脚本基础"><a href="#p87-IDA脚本基础" class="headerlink" title="p87[IDA脚本基础]"></a>p87[IDA脚本基础]</h3><p>ida_pyhon库</p>
-<p><code>from idaapi import*</code></p>
-<h4 id="socket编程"><a href="#socket编程" class="headerlink" title="socket编程"></a>socket编程</h4><p><img src="/image/1.png" alt></p>
-<h4 id="http编程"><a href="#http编程" class="headerlink" title="http编程"></a>http编程</h4><p><img src alt></p>
-<h3 id="shellcode编写篇"><a href="#shellcode编写篇" class="headerlink" title="shellcode编写篇"></a>shellcode编写篇</h3><p>。。。。。。待补充<br>（感觉打CTF的一般都会一些看的比较快）</p>
-<h3 id="手工处理文件-amp-自动提取"><a href="#手工处理文件-amp-自动提取" class="headerlink" title="手工处理文件&amp;自动提取"></a>手工处理文件&amp;自动提取</h3><h4 id="手动"><a href="#手动" class="headerlink" title="手动"></a>手动</h4><p>查看文件的magic这里和安卓对dex文件的解析很像，简单说一下，主要是看关键的头字符，然后利用<code>dd</code>命令进行切割。感觉这里更多的是了解，毕竟一般不会自己手动或者是重写一个提取工具。</p>
-<h4 id="自动"><a href="#自动" class="headerlink" title="自动"></a>自动</h4><p>主要是利用的<code>binwalk</code>感觉工具还是在利用中熟练的慢慢来。</p>
-
+            <div class="post-button text-center">
+              <a class="btn" href="/2019/07/01/揭秘家用路由器0day漏洞挖掘技术笔记/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
           
+          <!--/noindex-->
         
       
-    </div>
+    </p></div>
 
     
 
