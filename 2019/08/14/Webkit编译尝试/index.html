@@ -96,17 +96,18 @@
 
 
 
-  <meta name="description" content="个人介绍大二再读即将大三，一个本科不小心选了建筑的网安爱好者。 邮箱peanuts_sec@163.com">
-<meta property="og:type" content="website">
-<meta property="og:title" content="about">
-<meta property="og:url" content="http://yoursite.com/about/index.html">
+  <meta name="description" content="拖延症的我终于开始编译它了。。。">
+<meta name="keywords" content="--浏览器">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Webkit编译尝试">
+<meta property="og:url" content="http://yoursite.com/2019/08/14/Webkit编译尝试/index.html">
 <meta property="og:site_name" content="peanuts&#39;blog">
-<meta property="og:description" content="个人介绍大二再读即将大三，一个本科不小心选了建筑的网安爱好者。 邮箱peanuts_sec@163.com">
+<meta property="og:description" content="拖延症的我终于开始编译它了。。。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-06-28T07:19:50.467Z">
+<meta property="og:updated_time" content="2019-08-14T07:47:19.464Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="about">
-<meta name="twitter:description" content="个人介绍大二再读即将大三，一个本科不小心选了建筑的网安爱好者。 邮箱peanuts_sec@163.com">
+<meta name="twitter:title" content="Webkit编译尝试">
+<meta name="twitter:description" content="拖延症的我终于开始编译它了。。。">
 
 
 
@@ -114,7 +115,7 @@
 
   
   
-  <link rel="canonical" href="http://yoursite.com/about/">
+  <link rel="canonical" href="http://yoursite.com/2019/08/14/Webkit编译尝试/">
 
 
 
@@ -124,7 +125,7 @@
   };
 </script>
 
-  <title>about | peanuts'blog</title>
+  <title>Webkit编译尝试 | peanuts'blog</title>
   
 
 
@@ -227,7 +228,7 @@
         
         
           
-          <li class="menu-item menu-item-about menu-item-active">
+          <li class="menu-item menu-item-about">
 
     
     
@@ -320,75 +321,181 @@
           
             
 
-    
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-    
-
-  
-
-
           
           <div id="content" class="content">
             
 
   <div id="posts" class="posts-expand">
     
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/14/Webkit编译尝试/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="peanuts">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/touxiang.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="peanuts'blog">
+    </span>
+
     
-    
-    <div class="post-block page">
       <header class="post-header">
 
-<h1 class="post-title" itemprop="name headline">about
-
-</h1>
-
-<div class="post-meta">
-  
-  
-
-
-
-</div>
-
-</header>
-
-      
-      
-      
-      <div class="post-body">
         
         
-          <h3 id="个人介绍"><a href="#个人介绍" class="headerlink" title="个人介绍"></a>个人介绍</h3><p>大二再读即将大三，一个本科不小心选了建筑的网安爱好者。</p>
-<h3 id="邮箱"><a href="#邮箱" class="headerlink" title="邮箱"></a>邮箱</h3><p><a href="mailto:peanuts_sec@163.com" target="_blank" rel="noopener">peanuts_sec@163.com</a></p>
+          <h1 class="post-title" itemprop="name headline">Webkit编译尝试
 
+              
+            
+          </h1>
         
-      </div>
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-08-14 14:39:43 / Modified: 15:47:19" itemprop="dateCreated datePublished" datetime="2019-08-14T14:39:43+08:00">2019-08-14</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
       
+
+      
+        <p>拖延症的我终于开始编译它了。。。<br><a id="more"></a></p>
+<h3 id="官网下载源代码"><a href="#官网下载源代码" class="headerlink" title="官网下载源代码"></a>官网下载源代码</h3><p>这里下载源代码可以加入一些参数不然会下的比较慢<br><code>https://github.com/WebKit/webkit</code></p>
+<h3 id="编译环境"><a href="#编译环境" class="headerlink" title="编译环境"></a>编译环境</h3><blockquote>
+<p>工具：xcode 10.3+</p>
+<p>环境mac</p>
+</blockquote>
+<p>先打开工作区<code>Flie-&gt;Workspace setting</code> then <code>Advanced</code> then <code>Custom</code> 然后选择<code>Intermediates</code>填写<code>WebKitBuild</code>.然后打开<code>Product -&gt; Build</code>.最后编译完成之后文件会放在<code>xocde-&gt;Locations</code>其中有文件存放的位置。（因为自己在装的时候招了半天的文件。。还编译了两遍才成功）</p>
+<h3 id="坑点"><a href="#坑点" class="headerlink" title="坑点"></a>坑点</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dyld: Symbol not found: __ZN3JSC10DisallowGC19s_scopeReentryCountE</span><br><span class="line">  Referenced from: /Users/peanuts/Library/Developer/Xcode/DerivedData/WebkitBuild/Debug/./jsC</span><br><span class="line">  Expected in: /System/Library/Frameworks/JavaScriptCore.framework/Versions/A/JavaScriptCore</span><br><span class="line"> in /Users/peanuts/Library/Developer/Xcode/DerivedData/WebkitBuild/Debug/./jsC</span><br><span class="line">[1]    31524 abort      ./jsC</span><br></pre></td></tr></table></figure>
+<p>这里把环境变量改成自己的就可以了。</p>
+<p><code>export DYLD_FRAMEWORK_PATH=~/Library/Developer/Xcode/DerivedData/WebkitBuild/Debug</code></p>
+<p>然后就可以直接运行了。</p>
+<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><p>切换到目录然后<br><code>./Debug/jsc</code></p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><code>https://o0xmuhe.github.io/2018/12/31/Webkit%E7%BC%96%E8%AF%91%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/</code></p>
+
       
     </div>
-    
-
-
 
     
+
     
     
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/浏览器/" rel="tag"># --浏览器</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/11/Docker入门记录到搭建pwn题/" rel="next" title="Docker入门记录">
+                <i class="fa fa-chevron-left"></i> Docker入门记录
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
   </div>
 
 
@@ -524,7 +631,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#个人介绍"><span class="nav-number">1.</span> <span class="nav-text">个人介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#邮箱"><span class="nav-number">2.</span> <span class="nav-text">邮箱</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#官网下载源代码"><span class="nav-number">1.</span> <span class="nav-text">官网下载源代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编译环境"><span class="nav-number">2.</span> <span class="nav-text">编译环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#坑点"><span class="nav-number">3.</span> <span class="nav-text">坑点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行"><span class="nav-number">4.</span> <span class="nav-text">运行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
             
 
           </div>
@@ -703,7 +810,7 @@
   
     <script>
   window.livereOptions = {
-    refer: 'about/index.html'
+    refer: '2019/08/14/Webkit编译尝试/'
   };
   (function(d, s) {
     var j, e = d.getElementsByTagName(s)[0];
