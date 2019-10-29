@@ -337,6 +337,198 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/29/RSA-learing/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="peanuts">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/touxiang.JPG">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="peanuts'blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/10/29/RSA-learing/" class="post-title-link" itemprop="url">RSA-learing</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-10-29 09:41:50 / Modified: 09:42:25" itemprop="dateCreated datePublished" datetime="2019-10-29T09:41:50+08:00">2019-10-29</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>最近比赛的pwn题经常会穿插这些，让我有些摸不着头脑，所以学习一波。</p>
+<h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><p><strong>互质关系:</strong> 我觉得这个大家应该都知道，就是两个互质的数</p>
+<p><strong>欧拉函数:</strong> 这个函数的作用就是在小于等于n的数当中有多少个与n构成互质关系的数。</p>
+<p><strong>欧拉定理:</strong> 如果两个正整数a,n互质则n的欧拉函数可以使得 a^Φ(n) = 1(mod n) ps:这里的等于是三横线等于。</p>
+<p><strong>模反元素:</strong> 就是一个公式和上面一样如果正整数a,n互质，那么一定可以找到整数b，使得ab-1能被n整除。</p>
+<blockquote>
+<p>如上感觉就是为了保证是质数,菜鸡如是理解。。</p>
+</blockquote>
+<blockquote>
+<p>那么有了上面的数学基础可以继续往下看了</p>
+</blockquote>
+<h2 id="密钥"><a href="#密钥" class="headerlink" title="密钥"></a>密钥</h2><p>这里我们需要生成私钥和公钥</p>
+<h3 id="first-step"><a href="#first-step" class="headerlink" title="first step"></a>first step</h3><p>随机选取两个不相等的质数 <code>p</code> 和 <code>q</code></p>
+<h3 id="second-step"><a href="#second-step" class="headerlink" title="second step"></a>second step</h3><p>有了<code>p</code> 和 <code>q</code> 那么久可以求出n</p>
+<blockquote>
+<p>n = p * q</p>
+</blockquote>
+<p>所求出来的就是密钥的长度，按照二进制位来计算总共几位。</p>
+<h3 id="third-step"><a href="#third-step" class="headerlink" title="third step"></a>third step</h3><p>计算出欧拉函数<code>Φ(n)</code></p>
+<blockquote>
+<p>Φ(n) = (p-1)*(q-1)</p>
+</blockquote>
+<h3 id="four-step"><a href="#four-step" class="headerlink" title="four step"></a>four step</h3><p>随机选择一个整数e<br><strong>条件：</strong></p>
+<blockquote>
+<p>1 &lt; e &lt; Φ(n)</p>
+<p>e与Φ(n)互质</p>
+</blockquote>
+<h3 id="five-step"><a href="#five-step" class="headerlink" title="five step"></a>five step</h3><p>计算<code>e</code> 对于 <code>Φ(n)</code>的模反元素d</p>
+<blockquote>
+<p>ed -1 = k*Φ(n) </p>
+</blockquote>
+<p>期可以转化为对二元一次方程的求解</p>
+<blockquote>
+<p>ex - 1 - y*Φ(n) =0</p>
+</blockquote>
+<p>同理已知<code>e</code> 和 <code>Φ(n)</code>即求得<code>x</code>,<code>y</code>的值</p>
+<h3 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h3><p><strong>公钥封装为(n,e)</strong></p>
+<p><strong>私钥封装为（n,d）</strong></p>
+<h3 id="安全性"><a href="#安全性" class="headerlink" title="安全性"></a>安全性</h3><p>这里不是密码大课堂。。我也只是个密码小白，大概看了资料期主要的问题在于n有可能被因数分解，但是这种情况是在n并不复杂的情况下。其他不说了，做不来密码题，做不来密码题哈哈哈，不过还是挺有趣的。</p>
+<h2 id="加密解密"><a href="#加密解密" class="headerlink" title="加密解密"></a>加密解密</h2><p>这是最激动人心的时候了，这时候才知道原来整个过程并不难。。emmmm。。不知道当时自己为什么这么惧怕这东西哈哈哈。</p>
+<h3 id="加密-gt-公钥运用"><a href="#加密-gt-公钥运用" class="headerlink" title="加密-&gt;公钥运用"></a>加密-&gt;公钥运用</h3><blockquote>
+<p>m^e mod n = c</p>
+</blockquote>
+<h3 id="解密"><a href="#解密" class="headerlink" title="解密"></a>解密</h3><blockquote>
+<p>c^d mod n = m</p>
+</blockquote>
+<p><strong>好了不知道大家看到这里会不会觉得rsa其实整个过程对于我们需要运用的人来说并不难。当然研究它的大佬们的高度和我这种菜鸡是不一样嘻嘻。</strong></p>
+<p>这里还有一些为什么私钥能够推出公钥，也就是为什么解密公式能够成立。给出参考链接<br><a href="http://www.ruanyifeng.com/blog/2013/07/rsa_algorithm_part_two.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2013/07/rsa_algorithm_part_two.html</a></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>阮一峰大佬的博客，深入浅出的解释了。</p>
+<p><a href="http://www.ruanyifeng.com/blog/2013/07/rsa_algorithm_part_two.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2013/07/rsa_algorithm_part_two.html</a></p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/17/JavaScript-engine-exploit学习记录/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1728,167 +1920,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/18/peanuts-daily/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="peanuts">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/touxiang.JPG">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="peanuts'blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/06/18/peanuts-daily/" class="post-title-link" itemprop="url">peanuts & daily</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-
-              
-                
-              
-
-              <time title="Created: 2019-06-18 19:24:24" itemprop="dateCreated datePublished" datetime="2019-06-18T19:24:24+08:00">2019-06-18</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2019-10-24 19:44:27" itemprop="dateModified" datetime="2019-10-24T19:44:27+08:00">2019-10-24</time>
-              
-            
-          </span>
-
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h3 id="2019-6-18"><a href="#2019-6-18" class="headerlink" title="2019-6-18"></a>2019-6-18</h3>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2019/06/18/peanuts-daily/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1937,7 +1968,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">15</span>
+                    <span class="site-state-item-count">16</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -1976,7 +2007,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">10</span>
+                      
+                    
+                    <span class="site-state-item-count">11</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>
