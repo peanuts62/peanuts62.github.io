@@ -96,20 +96,20 @@
 
 
 
-  <meta name="description" content="简单的记录下自己看书的笔记">
-<meta name="keywords" content="-iot">
+  <meta name="description" content="刷刷刷，要有多大的成就就得有多大的努力啊。">
+<meta name="keywords" content="--PAT">
 <meta property="og:type" content="article">
-<meta property="og:title" content="揭秘家用路由器0day漏洞挖掘技术笔记">
-<meta property="og:url" content="http://yoursite.com/2019/07/01/揭秘家用路由器0day漏洞挖掘技术笔记/index.html">
+<meta property="og:title" content="PAT-A-刷题记录">
+<meta property="og:url" content="http://yoursite.com/2019/11/18/PAT-A-刷题记录/index.html">
 <meta property="og:site_name" content="peanuts&#39;blog">
-<meta property="og:description" content="简单的记录下自己看书的笔记">
+<meta property="og:description" content="刷刷刷，要有多大的成就就得有多大的努力啊。">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://yoursite.com/image/1.png">
-<meta property="og:updated_time" content="2019-07-03T06:42:17.093Z">
+<meta property="og:image" content="http://yoursite.com/image/PAT-A/DFS-1.png">
+<meta property="og:updated_time" content="2019-11-18T13:20:18.115Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="揭秘家用路由器0day漏洞挖掘技术笔记">
-<meta name="twitter:description" content="简单的记录下自己看书的笔记">
-<meta name="twitter:image" content="http://yoursite.com/image/1.png">
+<meta name="twitter:title" content="PAT-A-刷题记录">
+<meta name="twitter:description" content="刷刷刷，要有多大的成就就得有多大的努力啊。">
+<meta name="twitter:image" content="http://yoursite.com/image/PAT-A/DFS-1.png">
 
 
 
@@ -117,7 +117,7 @@
 
   
   
-  <link rel="canonical" href="http://yoursite.com/2019/07/01/揭秘家用路由器0day漏洞挖掘技术笔记/">
+  <link rel="canonical" href="http://yoursite.com/2019/11/18/PAT-A-刷题记录/">
 
 
 
@@ -127,7 +127,7 @@
   };
 </script>
 
-  <title>揭秘家用路由器0day漏洞挖掘技术笔记 | peanuts'blog</title>
+  <title>PAT-A-刷题记录 | peanuts'blog</title>
   
 
 
@@ -343,7 +343,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/01/揭秘家用路由器0day漏洞挖掘技术笔记/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/18/PAT-A-刷题记录/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="peanuts">
@@ -360,7 +360,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">揭秘家用路由器0day漏洞挖掘技术笔记
+          <h1 class="post-title" itemprop="name headline">PAT-A-刷题记录
 
               
             
@@ -386,24 +386,12 @@
                 
               
 
-              <time title="Created: 2019-07-01 20:16:18" itemprop="dateCreated datePublished" datetime="2019-07-01T20:16:18+08:00">2019-07-01</time>
+              <time title="Created: 2019-11-18 20:53:16 / Modified: 21:20:18" itemprop="dateCreated datePublished" datetime="2019-11-18T20:53:16+08:00">2019-11-18</time>
             
 
             
               
 
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2019-07-03 14:42:17" itemprop="dateModified" datetime="2019-07-03T14:42:17+08:00">2019-07-03</time>
               
             
           </span>
@@ -437,25 +425,39 @@
       
 
       
-        <p>简单的记录下自己看书的笔记<br><a id="more"></a></p>
-<h3 id="p72-DIR605L"><a href="#p72-DIR605L" class="headerlink" title="p72[DIR605L]"></a>p72[DIR605L]</h3><p>关于启动qemu-mips脚本的问题<br><code>sudo chroot ./ ./qemu-mips ./bin./boa</code></p>
-<p>这里是一个chroot将本地作为根目录的问题，应当注意此地，书上缺少了<code>./</code>导致<code>chroot</code>命令将<code>./qemu-mpis</code>作为了根目录。</p>
-<h4 id="利用函数劫持达到正常运行固件的目的"><a href="#利用函数劫持达到正常运行固件的目的" class="headerlink" title="利用函数劫持达到正常运行固件的目的"></a>利用函数劫持达到正常运行固件的目的</h4><p>文中劫持的是apmib_init()函数，此函数来自链接库apmib.so链接库中，所以重写apmib.so，然后用<code>qemu -E LD_PRELOAD=&quot;./apmib-ld.so&quot;</code>指定链接库运行。</p>
-<h3 id="p81-DIR605L"><a href="#p81-DIR605L" class="headerlink" title="p81[DIR605L]"></a>p81[DIR605L]</h3><p>关于ida模拟运行路由文件系统。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> debug</span><br><span class="line"><span class="meta">#</span>!/bin/bash</span><br><span class="line">INPUT=$1  //接收bash脚本的第一个参数作为BusyBox为输入参数</span><br><span class="line">LEN=$(echo -n "$INPUT" | wc -c) //计算输入参数长度</span><br><span class="line">PORT="1234" //设定端口胃1234</span><br><span class="line">if ["$LEN" == "0"] || ["$INPUT" == "-h"] || ["$UID" != "0"]</span><br><span class="line">then</span><br><span class="line">    echo "\nUsage: sudo $0 \n"</span><br><span class="line">    exit 1</span><br><span class="line">fi //判断参数个数和类型是否正确，如有错误显示使用方法，且需要root权限执行</span><br><span class="line">cp $(which qemu-mips) ./qemu //将文件copy到本地文件</span><br><span class="line">echo "$INPUT" | chroot . ./qemu -E CONTENT_LENGTH=$LEN -g $PORT /bin/busybox 2&gt;/dev/null</span><br><span class="line">rm -f ./qemu</span><br></pre></td></tr></table></figure>
-<p>启动</p>
-<p><code>sudo sh ./text.sh &quot;argument&quot;</code></p>
-<p>gdb调试方法</p>
-<p><code>gdb-multiarch ./xxx</code></p>
-<p><code>set architecture mips</code> //可选</p>
-<p><code>target remote address:port</code></p>
-<h3 id="p87-IDA脚本基础"><a href="#p87-IDA脚本基础" class="headerlink" title="p87[IDA脚本基础]"></a>p87[IDA脚本基础]</h3><p>ida_pyhon库</p>
-<p><code>from idaapi import*</code></p>
-<h4 id="socket编程"><a href="#socket编程" class="headerlink" title="socket编程"></a>socket编程</h4><p><img src="/image/1.png" alt></p>
-<h4 id="http编程"><a href="#http编程" class="headerlink" title="http编程"></a>http编程</h4><p><img src alt></p>
-<h3 id="shellcode编写篇"><a href="#shellcode编写篇" class="headerlink" title="shellcode编写篇"></a>shellcode编写篇</h3><p>。。。。。。待补充<br>（感觉打CTF的一般都会一些看的比较快）</p>
-<h3 id="手工处理文件-amp-自动提取"><a href="#手工处理文件-amp-自动提取" class="headerlink" title="手工处理文件&amp;自动提取"></a>手工处理文件&amp;自动提取</h3><h4 id="手动"><a href="#手动" class="headerlink" title="手动"></a>手动</h4><p>查看文件的magic这里和安卓对dex文件的解析很像，简单说一下，主要是看关键的头字符，然后利用<code>dd</code>命令进行切割。感觉这里更多的是了解，毕竟一般不会自己手动或者是重写一个提取工具。</p>
-<h4 id="自动"><a href="#自动" class="headerlink" title="自动"></a>自动</h4><p>主要是利用的<code>binwalk</code>感觉工具还是在利用中熟练的慢慢来。</p>
+        <p>刷刷刷，要有多大的成就就得有多大的努力啊。<br><a id="more"></a></p>
+<h2 id="DFS-深度搜索"><a href="#DFS-深度搜索" class="headerlink" title="DFS 深度搜索"></a>DFS 深度搜索</h2><p>什么是深度搜索尼？看下面的图，然后我进行一个搜索。</p>
+<p><img src="/image/PAT-A/DFS-1.png" alt></p>
+<blockquote>
+<ol>
+<li>先搜索的是1234然后发现4，会回到3寻找别的路径</li>
+<li>发现5这个路径进入，然后发现5也已经是死胡同</li>
+<li>发现3已经结束没有别的路径在往上2，有一个路径是6，然后6也是死胡同，然后再往上，2也已经结束</li>
+<li>在往上到1，1的另一个路径为7，7也为死胡同了</li>
+<li>在到另一个路径8,接下来就是一样了就不说了。</li>
+</ol>
+</blockquote>
+<p>那么这个算法的实现是怎么样的尼。</p>
+<ol>
+<li>先是递归，为什么用递归，作为算法菜鸡只知道这样很好用，然后递归实现栈操作很容易。</li>
+<li>边界条件是什么？在这里面边界条件就是下一个子结点为空。</li>
+</ol>
+<p>这里以PAT-A-1004为例：</p>
+<h4 id="PAT-A-1004"><a href="#PAT-A-1004" class="headerlink" title="PAT-A-1004"></a>PAT-A-1004</h4><p>A family hierarchy is usually presented by a pedigree tree. Your job is to count those family members who have no child.</p>
+<p>####Input Specification:<br>Each input file contains one test case. Each case starts with a line containing 0&lt;N&lt;100, the number of nodes in a tree, and M (&lt;N), the number of non-leaf nodes. Then M lines follow, each in the format:</p>
+<p><code>ID K ID[1] ID[2] ... ID[K]</code></p>
+<p>where ID is a two-digit number representing a given non-leaf node, K is the number of its children, followed by a sequence of two-digit ID’s of its children. For the sake of simplicity, let us fix the root ID to be 01.</p>
+<p>The input ends with N being 0. That case must NOT be processed.</p>
+<h4 id="Output-Specification"><a href="#Output-Specification" class="headerlink" title="Output Specification:"></a>Output Specification:</h4><p>For each test case, you are supposed to count those family members who have no child for every seniority level starting from the root. The numbers must be printed in a line, separated by a space, and there must be no extra space at the end of each line.</p>
+<p>The sample case represents a tree with only 2 nodes, where 01 is the root and 02 is its only child. Hence on the root 01 level, there is 0 leaf node; and on the next level, there is 1 leaf node. Then we should output 0 1 in a line.</p>
+<h4 id="Sample-Input"><a href="#Sample-Input" class="headerlink" title="Sample Input:"></a>Sample Input:</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2 1</span><br><span class="line">01 1 02</span><br></pre></td></tr></table></figure>
+<h4 id="Sample-Output"><a href="#Sample-Output" class="headerlink" title="Sample Output:"></a>Sample Output:</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 1</span><br></pre></td></tr></table></figure>
+<p>题目好晦涩难懂的英语，渣渣看了好久。。</p>
+<blockquote>
+<p>思路上，借鉴了柳神的思路，先是利用vector创建二元数组然后利用dfs进行一个搜索，去搜索叶节点。而边界条件是什么？边界条件就是当vector.size()等于0的时候，这个时候说明这个index后面没有东东了，所以就可以确定这是叶结点。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;iostream&gt;</span><br><span class="line">#include&lt;algorithm&gt;</span><br><span class="line">#include&lt;vector&gt;</span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">vector&lt;int&gt; v[100];</span><br><span class="line"></span><br><span class="line">int book[100], maxdepth = -1;</span><br><span class="line">void dfs(int index,int depth)&#123;</span><br><span class="line">    if(v[index].size() == 0)&#123;</span><br><span class="line">        book[depth]++;</span><br><span class="line">        maxdepth = max(maxdepth,depth);</span><br><span class="line">        return ;</span><br><span class="line">    &#125;</span><br><span class="line">    for(int i = 0;i&lt;v[index].size();i++)&#123;</span><br><span class="line">        dfs(v[index][i],depth+1);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line">    int n,m,k,note,c;</span><br><span class="line">    scanf(&quot;%d %d&quot;,&amp;n,&amp;m);</span><br><span class="line">    for(int i = 0;i &lt; m;i++)&#123;</span><br><span class="line">        scanf(&quot;%d %d&quot;,&amp;note,&amp;k);</span><br><span class="line">        for(int j = 0; j &lt; k;j++)&#123;</span><br><span class="line">            scanf(&quot;%d&quot;,&amp;c);</span><br><span class="line">            v[note].push_back(c);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    dfs(1,0);</span><br><span class="line">    printf(&quot;%d&quot;,book[0]);</span><br><span class="line">    for(int i = 1;i&lt;=maxdepth ;i++)&#123;</span><br><span class="line">        printf(&quot; %d&quot;,book[i]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>贴上代码，说起来其实dfs本质应该是，递归运算向子节点不断探索，到了边界条件再返回。具体实现可以利用vector去创建二维数组来实现。</p>
 
       
     </div>
@@ -479,7 +481,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/iot/" rel="tag"># -iot</a>
+            <a href="/tags/PAT/" rel="tag"># --PAT</a>
           
         </div>
       
@@ -492,8 +494,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/06/27/强网杯线下Router-路由器漏洞挖掘/" rel="next" title="强网杯线下Router-路由器漏洞挖掘">
-                <i class="fa fa-chevron-left"></i> 强网杯线下Router-路由器漏洞挖掘
+              <a href="/2019/11/03/2019上海大学生pwn/" rel="next" title="2019上海大学生pwn">
+                <i class="fa fa-chevron-left"></i> 2019上海大学生pwn
               </a>
             
           </div>
@@ -501,10 +503,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/07/11/Docker入门记录到搭建pwn题/" rel="prev" title="Docker入门记录">
-                Docker入门记录 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -661,7 +659,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#p72-DIR605L"><span class="nav-number">1.</span> <span class="nav-text">p72[DIR605L]</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#利用函数劫持达到正常运行固件的目的"><span class="nav-number">1.1.</span> <span class="nav-text">利用函数劫持达到正常运行固件的目的</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#p81-DIR605L"><span class="nav-number">2.</span> <span class="nav-text">p81[DIR605L]</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#p87-IDA脚本基础"><span class="nav-number">3.</span> <span class="nav-text">p87[IDA脚本基础]</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#socket编程"><span class="nav-number">3.1.</span> <span class="nav-text">socket编程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#http编程"><span class="nav-number">3.2.</span> <span class="nav-text">http编程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#shellcode编写篇"><span class="nav-number">4.</span> <span class="nav-text">shellcode编写篇</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#手工处理文件-amp-自动提取"><span class="nav-number">5.</span> <span class="nav-text">手工处理文件&amp;自动提取</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#手动"><span class="nav-number">5.1.</span> <span class="nav-text">手动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#自动"><span class="nav-number">5.2.</span> <span class="nav-text">自动</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#DFS-深度搜索"><span class="nav-number">1.</span> <span class="nav-text">DFS 深度搜索</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#PAT-A-1004"><span class="nav-number">1.0.1.</span> <span class="nav-text">PAT-A-1004</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Output-Specification"><span class="nav-number">1.0.2.</span> <span class="nav-text">Output Specification:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Sample-Input"><span class="nav-number">1.0.3.</span> <span class="nav-text">Sample Input:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Sample-Output"><span class="nav-number">1.0.4.</span> <span class="nav-text">Sample Output:</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -840,7 +838,7 @@
   
     <script>
   window.livereOptions = {
-    refer: '2019/07/01/揭秘家用路由器0day漏洞挖掘技术笔记/'
+    refer: '2019/11/18/PAT-A-刷题记录/'
   };
   (function(d, s) {
     var j, e = d.getElementsByTagName(s)[0];
